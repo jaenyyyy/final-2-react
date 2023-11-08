@@ -3,12 +3,16 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { RecoilRoot } from 'recoil';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  // <HashRouter>
+  // recoil을 사용할 수 있도록 허용하는 설정
+    <RecoilRoot>
+      <App />
+    </RecoilRoot>
+  // </HashRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
