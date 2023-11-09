@@ -1,23 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+import { NavLink, Route, Routes } from "react-router-dom";
+import Home from "./components/Home";
+import Menu from "./components/Menu";
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="">
+      {/* 상단 메뉴 영역 */}
+      <Menu/>
+
+      {/* 본문 영역 */}
+      <div className="row">
+        <div className="col-sm-10 offset-sm-1">
+          <Routes>
+            <Route exact path="/" element={<Home/>}></Route>
+          </Routes>
+        </div>
+      </div>
+
     </div>
   );
 }
