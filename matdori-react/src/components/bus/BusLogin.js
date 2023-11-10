@@ -5,6 +5,6 @@ const BusLogin = ()=>{
     
     </>
   )
-}
+};
 
 export default BusLogin;

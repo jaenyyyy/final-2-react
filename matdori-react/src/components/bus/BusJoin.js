@@ -181,7 +181,7 @@ const BusJoin = () => {
             name="busRegNo"
             onChange={handleChange}
             onBlur={checkJoin}
-            required 
+            required
           />
           <div className="valid-feedback"></div>
           <div className="invalid-feedback">사업자 등록 번호 10자리숫자를 입력하세요 예시 : 1234567890</div>
