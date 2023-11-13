@@ -4,6 +4,7 @@ import Home from "./components/Home";
 import Menu from "./components/Menu";
 import BusJoin from "./components/bus/BusJoin";
 import JoinSuccess from "./components/bus/JoinSuccess";
+import BusLogin from "./components/bus/BusLogin";
 
 function App() {
   
@@ -19,6 +20,7 @@ function App() {
             <Route exact path="/" element={<Home/>}></Route>
             <Route path="/bus-join" element={<BusJoin/>} /> {/* BusJoin 컴포넌트 추가 */}
             <Route path="/join/success" element={<JoinSuccess/>} />
+            <Route path="/bus-login" element={<BusLogin/>}/>
           </Routes>
         </div>
       </div>
