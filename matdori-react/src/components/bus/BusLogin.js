@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import { useSetBusId } from "../../recoil";
 
 const BusLogin = () => {
   const navigate = useNavigate();
+  const setLoggedInBusId = useSetBusId(); // Recoil 설정 함수 가져오기
 
   const [formData, setFormData] = useState({
     busId: "",
@@ -18,15 +20,25 @@ const BusLogin = () => {
     });
   };
 
+  const [loginError, setLoginError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
     axios.post('http://localhost:8080/business/login', formData)
       .then((response) => {
         console.log('로그인 성공:', response.data);
+        // 로그인 성공 시 처리
+
+        
+        setLoggedInBusId(response.data.busId); // Recoil로 로그인 정보 설정
+        console.log('리코일값저장?:', response.data.busId);
         navigate('/');
       })
       .catch((error) => {
         console.error('로그인 실패:', error);
+        setLoginError(true);
+        setErrorMessage("아이디 또는 비밀번호가 일치하지 않습니다");
       });
   };
 
@@ -37,16 +49,16 @@ const BusLogin = () => {
   return (
     <div className="container mt-5">
       <h1>사업체 로그인</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="row">
-          <div className="col-md-4 offset-md-4">
+      <div className="row">
+        <div className="col-md-6 offset-md-3">
+          <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="busId" className="form-label">
                 사업자 아이디
               </label>
               <input
                 type="text"
-                className="form-control"
+                className={`form-control ${loginError ? 'is-invalid' : ''}`}
                 id="busId"
                 name="busId"
                 value={formData.busId}
@@ -60,14 +72,16 @@ const BusLogin = () => {
               </label>
               <input
                 type="password"
-                className="form-control"
+                className={`form-control ${loginError ? 'is-invalid' : ''}`}
                 id="busPw"
                 name="busPw"
                 value={formData.busPw}
                 onChange={handleChange}
                 required
               />
-              <div className="invalid-feedback">아이디 또는 비밀번호가 일치하지 않습니다</div>
+              {loginError && (
+                <div className="invalid-feedback">{errorMessage}</div>
+              )}
             </div>
             <div className="d-flex justify-content-between align-items-center">
               <div>
@@ -83,9 +97,9 @@ const BusLogin = () => {
             <button type="submit" className="btn btn-primary mt-3">
               로그인
             </button>
-          </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   );
 };

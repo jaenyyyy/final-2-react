@@ -2,11 +2,14 @@ import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import matdori from '../assets/images/matdori.png';
 import "bootstrap/dist/js/bootstrap.js";
+import { useRecoilValue } from "recoil";
+import { busIdState } from "../recoil";
 
 
 
 const Menu = (props) => {
     const location = useLocation();
+    const busId = useRecoilValue(busIdState);
 
     return (
         <div>
@@ -21,7 +24,7 @@ const Menu = (props) => {
                     <div className="col text-end me-4" style={{ marginTop: '70px' }}>
                         <NavLink className={`nav-link ${location.pathname === '/bus-join' ? 'active' : ''}`} to="/bus-join">사업체회원가입</NavLink>
                         <NavLink className={`nav-link ${location.pathname === '/bus-login' ? 'active' : ''}`} to="/bus-login">사업체로그인</NavLink>
-                        <NavLink className={`nav-link ${location.pathname === '/login' ? 'active' : ''}`} to="/login">로그인</NavLink>
+                        {busId}님
                     </div>
                 </div>
             </div>
