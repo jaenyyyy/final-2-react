@@ -11,6 +11,10 @@ const Menu = (props) => {
     const location = useLocation();
     const busId = useRecoilValue(busIdState);
 
+    const handleLogout = () => {
+        localStorage.removeItem('loggedInBusId'); // 로그아웃: 로컬 스토리지에서 아이디 제거
+    };
+
     return (
         <div>
             <div className="container-fluid">
@@ -22,9 +26,17 @@ const Menu = (props) => {
                         <img src={matdori} width={250} />
                     </div>
                     <div className="col text-end me-4" style={{ marginTop: '70px' }}>
-                        <NavLink className={`nav-link ${location.pathname === '/bus-join' ? 'active' : ''}`} to="/bus-join">사업체회원가입</NavLink>
-                        <NavLink className={`nav-link ${location.pathname === '/bus-login' ? 'active' : ''}`} to="/bus-login">사업체로그인</NavLink>
-                        {busId}님
+                        {!busId ? (
+                            <>
+                                <NavLink className={`nav-link ${location.pathname === '/bus-join' ? 'active' : ''}`} to="/bus-join">사업체회원가입</NavLink>
+                                <NavLink className={`nav-link ${location.pathname === '/bus-login' ? 'active' : ''}`} to="/bus-login">사업체로그인</NavLink>
+                            </>
+                        ) : (
+                            <>
+                                <NavLink className="nav-link" to="/bus-profile">{busId}님 프로필</NavLink>
+                                <NavLink className="nav-link" to="/" onClick={handleLogout}>로그아웃</NavLink>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

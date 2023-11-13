@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
-import { useSetBusId } from "../../recoil";
+//import { useSetBusId } from "../../recoil";
+
+
+
 
 const BusLogin = () => {
   const navigate = useNavigate();
-  const setLoggedInBusId = useSetBusId(); // Recoil 설정 함수 가져오기
+  //const setLoggedInBusId = useSetBusId(); // Recoil 설정 함수 가져오기
 
   const [formData, setFormData] = useState({
     busId: "",
@@ -29,10 +32,10 @@ const BusLogin = () => {
       .then((response) => {
         console.log('로그인 성공:', response.data);
         // 로그인 성공 시 처리
-
         
-        setLoggedInBusId(response.data.busId); // Recoil로 로그인 정보 설정
-        console.log('리코일값저장?:', response.data.busId);
+        //setLoggedInBusId(response.data.busId); // Recoil로 로그인 정보 설정
+        localStorage.setItem('loggedInBusId', response.data.busId);//로컬스토리지에 아이디 값 저장
+        console.log('값저장?:', response.data.busId);
         navigate('/');
       })
       .catch((error) => {
