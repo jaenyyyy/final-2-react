@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
-//import { useSetBusId } from "../../recoil";
-
-
-
+import { useRecoilState } from "recoil";
+import { busIdState } from "../../recoil";
 
 const BusLogin = () => {
-  const navigate = useNavigate();
-  //const setLoggedInBusId = useSetBusId(); // Recoil 설정 함수 가져오기
-
   const [formData, setFormData] = useState({
     busId: "",
     busPw: "",
   });
+  const [user, setUser] = useRecoilState(busIdState);
+
+  const navigate = useNavigate();
+  const [loginError, setLoginError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,30 +23,30 @@ const BusLogin = () => {
     });
   };
 
-  const [loginError, setLoginError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const handleLoginSuccess = (data) => {
+    const { busId, token } = data;
+    localStorage.setItem('loggedInBusId', busId);
+    localStorage.setItem('loggedInToken', token);
+    setUser(busId); // Recoil 상태 업데이트
+    console.log(busId,token);
+    navigate('/');
+  };
+
+  const handleLoginFailure = (error) => {
+    console.error('로그인 실패:', error);
+    setLoginError(true);
+    setErrorMessage("비밀번호가 일치하지 않습니다");
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     axios.post('http://localhost:8080/business/login', formData)
       .then((response) => {
-        console.log('로그인 성공:', response.data);
-        // 로그인 성공 시 처리
-        
-        //setLoggedInBusId(response.data.busId); // Recoil로 로그인 정보 설정
-        localStorage.setItem('loggedInBusId', response.data.busId);//로컬스토리지에 아이디 값 저장
-        console.log('값저장?:', response.data.busId);
-        navigate('/');
+        handleLoginSuccess(response.data); // 로그인 성공 시 처리
       })
       .catch((error) => {
-        console.error('로그인 실패:', error);
-        setLoginError(true);
-        setErrorMessage("아이디 또는 비밀번호가 일치하지 않습니다");
+        handleLoginFailure(error); // 로그인 실패 시 처리
       });
-  };
-
-  const handleRemember = (e) => {
-    // 아이디 기억하기 기능 처리
   };
 
   return (
@@ -86,16 +86,22 @@ const BusLogin = () => {
                 <div className="invalid-feedback">{errorMessage}</div>
               )}
             </div>
+            {/* 에러 메시지 추가 */}
+            <div className="mb-3">
+              <div className="invalid-feedback">{errorMessage}</div>
+            </div>
             <div className="d-flex justify-content-between align-items-center">
               <div>
-                <input type="checkbox" id="rememberMe" onChange={handleRemember} />
+                {/* 기억하기 기능 추가 */}
+                {/* <input type="checkbox" id="rememberMe" onChange={handleRemember} />
                 <label htmlFor="rememberMe" className="form-check-label ms-2">
                   아이디 저장하기
-                </label>
+                </label> */}
               </div>
-              <a href="/find-credentials" className="text-decoration-none">
-                아이디/비밀번호 찾기
-              </a>
+              <div className="text-end">
+                <a href="/#/find-id" className="text-decoration-none me-2">아이디 찾기</a>
+                <a href="/#find-pw" className="text-decoration-none">비밀번호 찾기</a>
+              </div>
             </div>
             <button type="submit" className="btn btn-primary mt-3">
               로그인
