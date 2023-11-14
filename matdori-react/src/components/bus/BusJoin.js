@@ -121,6 +121,7 @@ const BusJoin = () => {
             name="busId"
             value={formData.busId} onChange={handleChange}
             onBlur={checkJoin}
+            placeholder="아이디는 영문소문자로 시작하는 영문,숫자 5~20자로 입력하세요"
             required
           />
           <div className="valid-feedback"></div>
@@ -141,6 +142,7 @@ const BusJoin = () => {
             name="busPw"
             onChange={handleChange}
             onBlur={checkJoin}
+            placeholder="비밀번호는 대문자, 소문자, 숫자, 특수 문자를 각각 하나 이상씩 포함하는 8~15자 사이의 문자로 입력하세요"
             required
           />
           <div className="valid-feedback"></div>
@@ -181,6 +183,7 @@ const BusJoin = () => {
             name="busRegNo"
             onChange={handleChange}
             onBlur={checkJoin}
+            placeholder="사업자 등록 번호 10자리숫자를 입력하세요"
             required
           />
           <div className="valid-feedback"></div>
@@ -216,6 +219,7 @@ const BusJoin = () => {
             name="busTel"
             onChange={handleChange}
             onBlur={checkJoin}
+            placeholder="연락처는 대시 - 없이 입력하세요"
           />
           <div className="valid-feedback"></div>
           <div className="invalid-feedback">연락처는 대시 - 없이 010으로시작하는 11자리 숫자를 입력하세요 예시 : 01051514351</div>
@@ -255,6 +259,7 @@ const BusJoin = () => {
             name="busPost"
             onChange={handleChange}
             onBlur={checkJoin}
+            placeholder="우편번호 5~6자리 숫자를 입력하세요"
             required
           />
           <div className="valid-feedback"></div>
