@@ -14,7 +14,7 @@ const BusProfile = () => {
     fetch(`http://localhost:8080/business/mypage/busId/${busId}`)
       .then((response) => response.json())
       .then((data) => setBusInfo(data))
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error)); 
   }, []);
 
   return (
