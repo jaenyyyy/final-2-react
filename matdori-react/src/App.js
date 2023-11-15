@@ -14,6 +14,7 @@ import ResHome from './components/restaurant/ResHome';
 import FindId from './components/bus/FindId';
 import FindPw from './components/bus/FindPw';
 import MyResList from './components/bus/MyResList';
+import MenuByRes from './components/restaurant/menu/MenuByRes';
 
 
 function App() {
@@ -32,9 +33,8 @@ function App() {
               <Route path="/join/success" element={<JoinSuccess/>} />
               <Route path="/bus-login" element={<BusLogin/>}/>
               <Route path="/bus-profile" element={<BusProfile/>}/>
-
+              <Route path="/restaurant/menu/list" element={<MenuByRes/>}/>
               <Route path="/restaurant" element={<ResHome/>}/>
-        
               
 
               <Route path='/find-id' element={<FindId/>}/>
@@ -42,6 +42,7 @@ function App() {
               <Route path='/bus-myreslist' element={<MyResList/>}/>
 
             </Routes>
+        
           </div>
         </div>
       </div>
