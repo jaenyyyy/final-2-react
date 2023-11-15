@@ -2,17 +2,19 @@ import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import matdori from '../assets/images/matdori.png';
 import "bootstrap/dist/js/bootstrap.js";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { busIdState } from "../recoil";
 
 
 
 const Menu = (props) => {
     const location = useLocation();
-    const busId = useRecoilValue(busIdState);
+    const [busId, setBusId] = useRecoilState(busIdState);
 
     const handleLogout = () => {
         localStorage.removeItem('loggedInBusId'); // 로그아웃: 로컬 스토리지에서 아이디 제거
+        localStorage.removeItem('loggedInToken'); // 로컬 스토리지에서 토큰 제거
+        setBusId(''); // Recoil 상태 비우기
     };
 
     return (
@@ -50,7 +52,7 @@ const Menu = (props) => {
                     <div className="collapse navbar-collapse" id="navbarColor02">
                         <ul className="navbar-nav me-auto">
                             <li className="nav-item">
-                                <NavLink className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} to="/">메뉴1</NavLink>
+                            <NavLink className={`nav-link ${location.pathname === '/bus-myreslist' ? 'active' : ''}`} to="/bus-myreslist">내 매장목록</NavLink>
                             </li>
                             <li className="nav-item">
                                 <NavLink className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} to="/">메뉴2</NavLink>
