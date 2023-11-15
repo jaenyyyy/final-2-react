@@ -151,7 +151,7 @@ const BusJoin = () => {
           />
           <div className="valid-feedback"></div>
           <div className="invalid-feedback">
-    {duplicateId ? '아이디가 중복되었습니다. 다른 아이디를 사용하세요.' : '아이디는 영문소문자로 시작하는 영문,숫자 5~20자로 입력하세요'}
+    {duplicateId ? '이미 사용중인 아이디 입니다.' : '아이디는 영문소문자로 시작하는 영문,숫자 5~20자로 입력하세요'}
   </div>
         </div>
 
