@@ -88,18 +88,32 @@ const BusJoin = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post('http://localhost:8080/business/join', formData)
+  
+    axios.get(`http://localhost:8080/business/check/${formData.busId}`)
       .then((response) => {
-        console.log('회원가입 성공:', response.data);
-        // 성공적으로 회원가입한 경우의 처리
-        navigate('/join/success');
+        if (response.data.exists) {
+          console.log('중복된 아이디입니다. 다른 아이디를 사용하세요.');
+          // 중복된 아이디 처리: 사용자에게 알림 등
+        } else {
+          // 중복된 아이디가 없으면 회원가입 진행
+          axios.post('http://localhost:8080/business/join', formData)
+            .then((response) => {
+              console.log('회원가입 성공:', response.data);
+              navigate('/join/success');
+            })
+            .catch((error) => {
+              console.error('회원가입 실패:', error);
+              // 회원가입 실패 시의 처리
+            });
+        }
       })
       .catch((error) => {
-        console.error('회원가입 실패:', error);
-        // 회원가입 실패 시의 처리
+        console.error('아이디 중복 확인 실패:', error);
+        // 중복 확인 실패 시의 처리
       });
   };
+  
+  
 
 
 
@@ -116,6 +130,7 @@ const BusJoin = () => {
             className={`form-control
               ${result.busId === true ? 'is-valid' : ''}
               ${result.busId === false ? 'is-invalid' : ''}
+              ${result.busId === false ? 'idDup' : ''}
             `}
             id="busId"
             name="busId"
@@ -126,6 +141,7 @@ const BusJoin = () => {
           />
           <div className="valid-feedback"></div>
           <div className="invalid-feedback">아이디는 영문소문자로 시작하는 영문,숫자 5~20자로 입력하세요 </div>
+          <div className="idDup">아이디가 중복되었습니다 다른 아이디를 사용해주세요 </div>
         </div>
 
         <div className="mb-3">
