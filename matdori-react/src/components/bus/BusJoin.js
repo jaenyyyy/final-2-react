@@ -1,11 +1,15 @@
 // BusJoin.js
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 const BusJoin = () => {
   const navigate = useNavigate();
+  const inputRef = useRef(); 
+
+    // 중복된 아이디 상태
+    const [duplicateId, setDuplicateId] = useState(false);
 
   //데이터입력
   const [formData, setFormData] = useState({
@@ -73,6 +77,9 @@ const BusJoin = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "busId") {
+      setDuplicateId(false); // 아이디가 변경될 때 중복 상태 초기화
+    }
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -88,18 +95,35 @@ const BusJoin = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post('http://localhost:8080/business/join', formData)
+  
+    axios.get(`http://localhost:8080/business/check/${formData.busId}`)
       .then((response) => {
-        console.log('회원가입 성공:', response.data);
-        // 성공적으로 회원가입한 경우의 처리
-        navigate('/join/success');
+        if (response.data.exists) {
+          console.log('중복된 아이디입니다. 다른 아이디를 사용하세요.');
+          // 중복된 아이디 처리
+          setDuplicateId(true); // 중복된 아이디 발견 시 duplicateId를 true로 설정
+          inputRef.current.focus(); // 중복 오류 발생 시 해당 입력 필드로 포커스 이동
+        } else {
+          setDuplicateId(false); // 중복 아이디가 없을 시 duplicateId를 false로 설정
+          // 중복된 아이디가 없으면 회원가입 진행
+          axios.post('http://localhost:8080/business/join', formData)
+            .then((response) => {
+              console.log('회원가입 성공:', response.data);
+              navigate('/join/success');
+            })
+            .catch((error) => {
+              console.error('회원가입 실패:', error);
+              // 회원가입 실패 시의 처리
+            });
+        }
       })
       .catch((error) => {
-        console.error('회원가입 실패:', error);
-        // 회원가입 실패 시의 처리
+        console.error('아이디 중복 확인 실패:', error);
+        // 중복 확인 실패 시의 처리
       });
   };
+  
+  
 
 
 
@@ -115,7 +139,7 @@ const BusJoin = () => {
             type="text"
             className={`form-control
               ${result.busId === true ? 'is-valid' : ''}
-              ${result.busId === false ? 'is-invalid' : ''}
+              ${result.busId === false || duplicateId ? 'is-invalid' : ''}
             `}
             id="busId"
             name="busId"
@@ -123,9 +147,12 @@ const BusJoin = () => {
             onBlur={checkJoin}
             placeholder="아이디는 영문소문자로 시작하는 영문,숫자 5~20자로 입력하세요"
             required
+            ref={inputRef} // ref 설정
           />
           <div className="valid-feedback"></div>
-          <div className="invalid-feedback">아이디는 영문소문자로 시작하는 영문,숫자 5~20자로 입력하세요 </div>
+          <div className="invalid-feedback">
+    {duplicateId ? '이미 사용중인 아이디 입니다.' : '아이디는 영문소문자로 시작하는 영문,숫자 5~20자로 입력하세요'}
+  </div>
         </div>
 
         <div className="mb-3">
