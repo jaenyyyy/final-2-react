@@ -7,6 +7,8 @@ import BusJoin from "./components/bus/BusJoin";
 import JoinSuccess from "./components/bus/JoinSuccess";
 import BusLogin from "./components/bus/BusLogin";
 import BusProfile from './components/bus/BusProfile';
+import ResHome from './components/restaurant/ResHome';
+
 
 function App() {
   return (
@@ -24,6 +26,9 @@ function App() {
               <Route path="/join/success" element={<JoinSuccess/>} />
               <Route path="/bus-login" element={<BusLogin/>}/>
               <Route path="/bus-profile" element={<BusProfile/>}/>
+              <Route path="/restaurant" element={<ResHome/>}/>
+        
+              
             </Routes>
           </div>
         </div>
