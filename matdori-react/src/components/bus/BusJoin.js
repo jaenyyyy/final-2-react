@@ -103,6 +103,10 @@ const BusJoin = () => {
       .then((response) => {
         console.log('인증번호를 이메일로 전송했습니다.');
         setCertSent(true);
+        // 인증번호 전송 후 60초 동안 버튼 비활성화
+        setTimeout(() => {
+          setCertSent(false);
+        }, 60000); // 60초
       })
       .catch((error) => {
         console.error('인증번호 전송에 실패했습니다:', error);
@@ -175,7 +179,9 @@ const BusJoin = () => {
   // 모든 입력이 유효한지 확인하는 함수
   const areAllInputsValid = () => {
     const allValid = Object.values(result).every((value) => value === true);
-    return allValid;
+    const isCertValid = validCert; // validCert 상태가 참이어야 함
+
+    return allValid && isCertValid;
   };
 
 
@@ -185,7 +191,7 @@ const BusJoin = () => {
 
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5" onSubmit={handleSubmit}>
       <h1>사업체 회원가입</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -351,7 +357,7 @@ const BusJoin = () => {
               className="btn btn-primary"
               type="button"
               onClick={handleCertSend}
-              disabled={certSent} // 이미 인증번호를 보냈다면 버튼 비활성화
+              //disabled={certSent} // 이미 인증번호를 보냈다면 버튼 비활성화
             >
               {certSent ? "재전송" : "인증번호 전송"}
             </button>
