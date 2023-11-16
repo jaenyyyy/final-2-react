@@ -6,10 +6,10 @@ import axios from 'axios';
 
 const BusJoin = () => {
   const navigate = useNavigate();
-  const inputRef = useRef(); 
+  const inputRef = useRef();
 
-    // 중복된 아이디 상태
-    const [duplicateId, setDuplicateId] = useState(false);
+  // 중복된 아이디 상태
+  const [duplicateId, setDuplicateId] = useState(false);
 
   //데이터입력
   const [formData, setFormData] = useState({
@@ -51,7 +51,7 @@ const BusJoin = () => {
 
     const pwCheckMatch =
       formData.busPw.length === 0 ? null : formData.busPwCheck.length > 0 && formData.busPw === formData.busPwCheck;
-      
+
     const regRegx = /^[0-9]{10}$/;
     const regMatch = formData.busRegNo.length === 0 ? null : regRegx.test(formData.busRegNo);
 
@@ -89,7 +89,7 @@ const BusJoin = () => {
     // }
 
     //checkJoin();
-    
+
   };
 
 
@@ -109,7 +109,7 @@ const BusJoin = () => {
         // 에러 처리
       });
   };
-  
+
 
   const handleCertInputChange = (e) => {
     // 입력된 인증번호 상태 변경
@@ -141,9 +141,9 @@ const BusJoin = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-        // 인증번호 확인
-        checkCertNumber();
-  
+    // 인증번호 확인
+    checkCertNumber();
+
     axios.get(`http://localhost:8080/business/check/${formData.busId}`)
       .then((response) => {
         if (response.data.exists) {
@@ -169,12 +169,18 @@ const BusJoin = () => {
         console.error('아이디 중복 확인 실패:', error);
         // 중복 확인 실패 시의 처리
       });
-      
+
   };
 
-  
-  
-  
+  // 모든 입력이 유효한지 확인하는 함수
+  const areAllInputsValid = () => {
+    const allValid = Object.values(result).every((value) => value === true);
+    return allValid;
+  };
+
+
+
+
 
 
 
@@ -202,8 +208,8 @@ const BusJoin = () => {
           />
           <div className="valid-feedback"></div>
           <div className="invalid-feedback">
-    {duplicateId ? '이미 사용중인 아이디 입니다.' : '아이디는 영문소문자로 시작하는 영문,숫자 5~20자로 입력하세요'}
-  </div>
+            {duplicateId ? '이미 사용중인 아이디 입니다.' : '아이디는 영문소문자로 시작하는 영문,숫자 5~20자로 입력하세요'}
+          </div>
         </div>
 
         <div className="mb-3">
@@ -228,24 +234,24 @@ const BusJoin = () => {
         </div>
 
         <div className="mb-3">
-        <label htmlFor="busPw" className="form-label">
-          비밀번호 확인
-        </label>
-        <input
-          type="password"
-          className={`form-control
+          <label htmlFor="busPw" className="form-label">
+            비밀번호 확인
+          </label>
+          <input
+            type="password"
+            className={`form-control
               ${result.busPwCheck === true ? "is-valid" : ""}
               ${result.busPwCheck === false ? "is-invalid" : ""}
             `}
-          id="busPwCheck"
-          name="busPwCheck"
-          onChange={handleChange}
-          onBlur={checkJoin}
-          required
-        />
-        <div className="valid-feedback">비밀번호가 일치합니다</div>
-        <div className="invalid-feedback">비밀번호가 일치하지 않습니다</div>
-      </div>
+            id="busPwCheck"
+            name="busPwCheck"
+            onChange={handleChange}
+            onBlur={checkJoin}
+            required
+          />
+          <div className="valid-feedback">비밀번호가 일치합니다</div>
+          <div className="invalid-feedback">비밀번호가 일치하지 않습니다</div>
+        </div>
 
         <div className="mb-3">
           <label htmlFor="busId" className="form-label">
@@ -274,7 +280,7 @@ const BusJoin = () => {
           </label>
           <input
             type="text"
-            className= "form-control"
+            className="form-control"
             id="busName"
             name="busName"
             onChange={handleChange}
@@ -351,7 +357,7 @@ const BusJoin = () => {
             </button>
             <div className="invalid-feedback">인증번호가 일치하지 않습니다.</div>
           </div>
-        </div> 
+        </div>
 
 
         <div className="mb-3">
@@ -404,9 +410,14 @@ const BusJoin = () => {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn btn-primary" disabled={!areAllInputsValid()}>
           회원가입
         </button>
+        {!areAllInputsValid() && (
+          <div className="alert alert-danger mt-2" role="alert">
+            완료되지 않은 항목이 있습니다.
+          </div>
+        )}
       </form>
     </div>
   );
