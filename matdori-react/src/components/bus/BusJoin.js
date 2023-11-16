@@ -351,7 +351,7 @@ const BusJoin = () => {
             </button>
             <div className="invalid-feedback">인증번호가 일치하지 않습니다.</div>
           </div>
-        </div>
+        </div> 
 
 
         <div className="mb-3">
