@@ -93,8 +93,56 @@ const BusJoin = () => {
   };
 
 
+  const [certSent, setCertSent] = useState(false); // 인증번호 전송 여부
+  const [certNumber, setCertNumber] = useState(""); // 입력된 인증번호
+  const [validCert, setValidCert] = useState(true); // 인증번호 일치 여부
+
+  const handleCertSend = () => {
+    console.log('이메일 주소:', formData.busEmail); // 콘솔 로그 추가
+    axios.post('http://localhost:8080/react/rest/cert/send', { certEmail: formData.busEmail })
+      .then((response) => {
+        console.log('인증번호를 이메일로 전송했습니다.');
+        setCertSent(true);
+      })
+      .catch((error) => {
+        console.error('인증번호 전송에 실패했습니다:', error);
+        // 에러 처리
+      });
+  };
+  
+
+  const handleCertInputChange = (e) => {
+    // 입력된 인증번호 상태 변경
+    setCertNumber(e.target.value);
+  };
+
+  const checkCertNumber = () => {
+    axios.post('http://localhost:8080/react/rest/cert/check', {
+      certEmail: formData.busEmail,
+      certNumber: certNumber // 입력된 인증번호
+    })
+      .then((response) => {
+        const isValid = response.data.result;
+        if (isValid) {
+          console.log('인증번호가 일치합니다.');
+          setValidCert(true);
+        } else {
+          console.log('인증번호가 일치하지 않습니다.');
+          setValidCert(false);
+        }
+      })
+      .catch((error) => {
+        console.error('인증번호 확인에 실패했습니다:', error);
+        // 에러 처리
+      });
+  };
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+        // 인증번호 확인
+        checkCertNumber();
   
     axios.get(`http://localhost:8080/business/check/${formData.busId}`)
       .then((response) => {
@@ -121,7 +169,10 @@ const BusJoin = () => {
         console.error('아이디 중복 확인 실패:', error);
         // 중복 확인 실패 시의 처리
       });
+      
   };
+
+  
   
   
 
@@ -271,6 +322,37 @@ const BusJoin = () => {
           <div className="valid-feedback"></div>
           <div className="invalid-feedback">이메일 형식이 맞지 않습니다 예시 : matdori@naver.com </div>
         </div>
+
+        <div className="mb-3">
+          <label htmlFor="certNumber" className="form-label">
+            인증번호
+          </label>
+          <div className="input-group">
+            <input
+              type="text"
+              className={`form-control
+                ${!validCert ? "is-invalid" : ""}
+              `}
+              id="certNumber"
+              name="certNumber"
+              value={certNumber}
+              onChange={handleCertInputChange}
+              onBlur={checkCertNumber}
+              placeholder="인증번호를 입력하세요"
+              required
+            />
+            <button
+              className="btn btn-primary"
+              type="button"
+              onClick={handleCertSend}
+              disabled={certSent} // 이미 인증번호를 보냈다면 버튼 비활성화
+            >
+              {certSent ? "재전송" : "인증번호 전송"}
+            </button>
+            <div className="invalid-feedback">인증번호가 일치하지 않습니다.</div>
+          </div>
+        </div>
+
 
         <div className="mb-3">
           <label htmlFor="busId" className="form-label">
