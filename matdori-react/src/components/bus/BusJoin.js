@@ -124,7 +124,7 @@ const BusJoin = () => {
         console.error('인증번호 확인에 실패했습니다:', error);
         // 에러 처리
       });
-  };
+  }; 
 
   const handleJoinClick = () => {
     // checkCertNumber();
