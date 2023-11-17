@@ -36,8 +36,8 @@ function App() {
               <Route path="/bus-profile" element={<BusProfile/>}/>
               <Route path="/bus-update" element={<Update/>}/>
               <Route path="/restaurant/menu/list" element={<MenuByRes/>}/>
-              <Route path="/restaurant" element={<ResHome/>}/>
-              
+              <Route path="/business/:busId/:resNo" element={<ResHome />} />
+              <Route path="/business/:busId/:resNo/menu" element={<MenuByRes />} />
 
               <Route path='/find-id' element={<FindId/>}/>
               <Route path='/find-pw' element={<FindPw/>}/>

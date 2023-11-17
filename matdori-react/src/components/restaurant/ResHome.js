@@ -1,22 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from "recoil";
+import { busIdState } from "../../recoil";
+import { useParams } from "react-router-dom";
 
 const ResHome = () => {
-  const navigate = useNavigate(); // useNavigate 훅을 이용해 navigate 함수를 얻습니다.
+  const { resNo } = useParams();
+  const busId = useRecoilValue(busIdState);
+  const navigate = useNavigate();
+  const [restaurants, setRestaurants] = useState([]);
 
-  // '메뉴관리' 버튼을 클릭했을 때 호출될 함수
-  const handleMenuClick = () => {
-    navigate('/restaurant/menu/list'); // navigate 함수를 사용해 해당 경로로 이동합니다.
+  useEffect(() => {
+    fetch(`http://localhost:8080/business/myres/${busId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      setRestaurants(data);
+    })
+    .catch((error) => console.error("Error fetching data:", error));
+  }, [busId]);
+
+  const handleMenuClick = (selectedResNo) => {
+    if (selectedResNo) {
+      navigate(`/business/${busId}/${selectedResNo}/menu`);
+    } else {
+      console.error("Restaurant number not set");
+    }
   };
 
   return (
     <>
-      <h1>메인</h1>
-      <button onClick={handleMenuClick}>메뉴관리</button>
-    <button>좌석관리</button>
-    <button>시간관리</button>
-    <button>공지사항관리</button>
-    <button>매장통계</button>
+      {restaurants.map((restaurant) => (
+        <div key={restaurant.resNo}>
+          <h1>{restaurant.resName}</h1>
+          <button onClick={() => handleMenuClick(restaurant.resNo)}>메뉴관리</button>
+    <button onClick={() => handleMenuClick(resNo)}>좌석관리</button>
+    <button onClick={() => handleMenuClick(resNo)}>시간관리</button>
+    <button onClick={() => handleMenuClick(resNo)}>공지사항관리</button>
+    <button onClick={() => handleMenuClick(resNo)}>매장통계</button>
+    </div>
+      ))}
     </>
   );
 };
