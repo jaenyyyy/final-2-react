@@ -1,9 +1,12 @@
-import { useRecoilValue } from "recoil";
-import { busIdState } from "../../recoil";
-import { useEffect, useState } from "react";
+// MyResList 컴포넌트
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { busIdState } from '../../recoil';
 
 const MyResList = () => {
   const busId = useRecoilValue(busIdState);
+  const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
 
   useEffect(() => {
@@ -19,8 +22,12 @@ const MyResList = () => {
       setRestaurants(data);
     })
     .catch((error) => console.error("Error fetching data:", error));
-  }, []); 
-  
+  }, [busId]);
+
+  const handleMenuClick = (resNo) => {
+    navigate(`/business/${busId}/${resNo}`);
+  };
+
   return (
     <div className="container mt-5">
       <h1>{busId}님 매장목록</h1>
@@ -32,6 +39,9 @@ const MyResList = () => {
                 <h5 className="card-title">{restaurant.resName}</h5>
                 <p className="card-text">{restaurant.resAddr1}</p>
                 <p className="card-text">{restaurant.resNo}</p>
+                <button onClick={() => handleMenuClick(restaurant.resNo)} className="btn btn-primary">
+                  상세보기
+                </button>
               </div>
             </div>
           </div>
