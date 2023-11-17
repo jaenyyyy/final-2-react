@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
 const BusJoin = () => {
-  const inputRef = useRef(); 
+  const inputRef = useRef();
+  const inputRefRegNo = useRef();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -33,15 +34,20 @@ const BusJoin = () => {
   });
 
   const [duplicateId, setDuplicateId] = useState(false);
+  const [duplicateRegNo, setDuplicateRegNo] = useState(false);
   const [certSent, setCertSent] = useState(false);
   const [certNumber, setCertNumber] = useState("");
-  const [validCert, setValidCert] = useState(true);
+  const [validCert, setValidCert] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "busId") {
       setDuplicateId(false);
+    }
+
+    if (name === "busRegNo") {
+      setDuplicateRegNo(false);
     }
 
     setFormData({
@@ -61,7 +67,7 @@ const BusJoin = () => {
 
     const pwCheckMatch =
       formData.busPw.length === 0 ? null : formData.busPwCheck.length > 0 && formData.busPw === formData.busPwCheck;
-      
+
     const regRegx = /^[0-9]{10}$/;
     const regMatch = formData.busRegNo.length === 0 ? null : regRegx.test(formData.busRegNo);
 
@@ -104,8 +110,8 @@ const BusJoin = () => {
     setCertNumber(e.target.value);
   };
 
+  // 인증번호 확인 처리
   const checkCertNumber = () => {
-    // 인증번호 확인 처리
     axios.post('http://localhost:8080/react/rest/cert/check', {
       certEmail: formData.busEmail,
       certNumber: certNumber // 입력된 인증번호
@@ -126,32 +132,60 @@ const BusJoin = () => {
       });
   };
 
-  const handleJoinClick = () => {
-    // checkCertNumber();
+  // 모든 입력이 유효한지 확인하는 함수
+  const areAllInputsValid = () => {
+    return (
+      result.busId === true &&
+      result.busPw === true &&
+      result.busPwCheck === true &&
+      result.busRegNo === true &&
+      result.busTel === true &&
+      result.busEmail === true &&
+      result.busPost === true &&
+      validCert === true
+    );
+  };
 
+  const handleJoinClick = () => {
     axios.get(`http://localhost:8080/business/check/${formData.busId}`)
-      .then((response) => {
+      .then((idResponse) => {
         // 중복 아이디 체크
-        if (response.data.exists) {
+        if (idResponse.data.exists) {
           console.log('중복된 아이디입니다. 다른 아이디를 사용하세요.');
           setDuplicateId(true); // 중복된 아이디 발견 시 duplicateId를 true로 설정
           inputRef.current.focus(); // 중복 오류 발생 시 해당 입력 필드로 포커스 이동
         } else {
           setDuplicateId(false);
-          axios.post('http://localhost:8080/business/join', formData)
-            .then((response) => {
-              console.log('회원가입 성공:', response.data);
-              navigate('/join/success');
+          // 여기서 사업자 등록번호 중복 체크
+          axios.get(`http://localhost:8080/business/checkRegNo/${formData.busRegNo}`)
+            .then((regNoResponse) => {
+              // 중복 사업자 등록번호 체크
+              if (regNoResponse.data.exists) {
+                console.log('중복된 사업자 등록번호입니다. 다른 번호를 입력하세요.');
+                setDuplicateRegNo(true); // 중복된 사업자 등록번호 발견 시 duplicateRegNo를 true로 설정
+                inputRefRegNo.current.focus(); // 중복 오류 발생 시 해당 입력 필드로 포커스 이동
+              } else {
+                 setDuplicateRegNo(false);
+                axios.post('http://localhost:8080/business/join', formData)
+                  .then((joinResponse) => {
+                    console.log('회원가입 성공:', joinResponse.data);
+                    navigate('/join/success');
+                  })
+                  .catch((joinError) => {
+                    console.error('회원가입 실패:', joinError);
+                  });
+              }
             })
-            .catch((error) => {
-              console.error('회원가입 실패:', error);
+            .catch((regNoError) => {
+              console.error('사업자 등록번호 중복 확인 실패:', regNoError);
             });
         }
       })
-      .catch((error) => {
-        console.error('아이디 중복 확인 실패:', error);
+      .catch((idError) => {
+        console.error('아이디 중복 확인 실패:', idError);
       });
   };
+  
 
   // const areAllInputsValid = () => {
   //   // 입력 값의 유효성 검사
@@ -161,9 +195,10 @@ const BusJoin = () => {
     <div className="container mt-5">
       <h1>사업체 회원가입</h1>
       <div className="mb-3">
-          <label htmlFor="busId" className="form-label">
-            사업자 아이디
-          </label>
+        <label htmlFor="busId" className="form-label">
+          사업자 아이디
+        </label>
+        <div className="col-sm-6">
           <input
             type="text"
             className={`form-control
@@ -180,14 +215,16 @@ const BusJoin = () => {
           />
           <div className="valid-feedback"></div>
           <div className="invalid-feedback">
-    {duplicateId ? '이미 사용중인 아이디 입니다.' : '아이디는 영문소문자로 시작하는 영문,숫자 5~20자로 입력하세요'}
-  </div>
+            {duplicateId ? '이미 사용중인 아이디 입니다.' : '아이디는 영문소문자로 시작하는 영문,숫자 5~20자로 입력하세요'}
+          </div>
         </div>
+      </div>
 
-        <div className="mb-3">
-          <label htmlFor="busPw" className="form-label">
-            사업자 비밀번호
-          </label>
+      <div className="mb-3">
+        <label htmlFor="busPw" className="form-label">
+          사업자 비밀번호
+        </label>
+        <div className="col-sm-6">
           <input
             type="password"
             className={`form-control
@@ -204,36 +241,40 @@ const BusJoin = () => {
           <div className="valid-feedback"></div>
           <div className="invalid-feedback">비밀번호는 대문자, 소문자, 숫자, 특수 문자를 각각 하나 이상씩 포함하는 8~15자 사이의 문자로 입력하세요</div>
         </div>
+      </div>
 
-        <div className="mb-3">
+      <div className="mb-3">
         <label htmlFor="busPw" className="form-label">
           비밀번호 확인
         </label>
-        <input
-          type="password"
-          className={`form-control
+        <div className="col-sm-6">
+          <input
+            type="password"
+            className={`form-control
               ${result.busPwCheck === true ? "is-valid" : ""}
               ${result.busPwCheck === false ? "is-invalid" : ""}
             `}
-          id="busPwCheck"
-          name="busPwCheck"
-          onChange={handleChange}
-          onBlur={checkJoin}
-          required
-        />
-        <div className="valid-feedback">비밀번호가 일치합니다</div>
-        <div className="invalid-feedback">비밀번호가 일치하지 않습니다</div>
+            id="busPwCheck"
+            name="busPwCheck"
+            onChange={handleChange}
+            onBlur={checkJoin}
+            required
+          />
+          <div className="valid-feedback">비밀번호가 일치합니다</div>
+          <div className="invalid-feedback">비밀번호가 일치하지 않습니다</div>
+        </div>
       </div>
 
-        <div className="mb-3">
-          <label htmlFor="busId" className="form-label">
-            사업자 등록번호
-          </label>
+      <div className="mb-3">
+        <label htmlFor="busId" className="form-label">
+          사업자 등록번호
+        </label>
+        <div className="col-sm-6">
           <input
             type="text"
             className={`form-control
               ${result.busRegNo === true ? 'is-valid' : ''}
-              ${result.busRegNo === false ? 'is-invalid' : ''}
+              ${result.busRegNo === false || duplicateRegNo ? 'is-invalid' : ''}
             `}
             id="busRegNo"
             name="busRegNo"
@@ -241,18 +282,22 @@ const BusJoin = () => {
             onBlur={checkJoin}
             placeholder="사업자 등록 번호 10자리숫자를 입력하세요"
             required
+            ref={inputRefRegNo} // ref 설정
           />
           <div className="valid-feedback"></div>
-          <div className="invalid-feedback">사업자 등록 번호 10자리숫자를 입력하세요 예시 : 1234567890</div>
+          <div className="invalid-feedback">
+            {duplicateRegNo ? '이미 사용중인 사업자 등록번호입니다.' :  '사업자 등록 번호 10자리숫자를 입력하세요 예시 : 1234567890'}</div>
         </div>
+      </div>
 
-        <div className="mb-3">
-          <label htmlFor="busId" className="form-label">
-            사업자대표명
-          </label>
+      <div className="mb-3">
+        <label htmlFor="busId" className="form-label">
+          사업자대표명
+        </label>
+        <div className="col-sm-6">
           <input
             type="text"
-            className= "form-control"
+            className="form-control"
             id="busName"
             name="busName"
             onChange={handleChange}
@@ -260,11 +305,13 @@ const BusJoin = () => {
             required
           />
         </div>
+      </div>
 
-        <div className="mb-3">
-          <label htmlFor="busId" className="form-label">
-            사업자 연락처
-          </label>
+      <div className="mb-3">
+        <label htmlFor="busId" className="form-label">
+          사업자 연락처
+        </label>
+        <div className="col-sm-6">
           <input
             type="text"
             className={`form-control
@@ -280,62 +327,88 @@ const BusJoin = () => {
           <div className="valid-feedback"></div>
           <div className="invalid-feedback">연락처는 대시 - 없이 010으로시작하는 11자리 숫자를 입력하세요 예시 : 01051514351</div>
         </div>
+      </div>
 
-        <div className="mb-3">
-          <label htmlFor="busId" className="form-label">
-            사업자 이메일
-          </label>
+      <div className="mb-3">
+        <label htmlFor="busEmail" className="form-label me-2">
+          사업자 이메일
+        </label>
+        <div className="col-sm-6">
           <input
             type="text"
             className={`form-control
-              ${result.busEmail === true ? 'is-valid' : ''}
-              ${result.busEmail === false ? 'is-invalid' : ''}
-            `}
+      ${result.busEmail === true ? 'is-valid' : ''}
+      ${result.busEmail === false ? 'is-invalid' : ''}
+    `}
             id="busEmail"
             name="busEmail"
             onChange={handleChange}
             onBlur={checkJoin}
             required
+            placeholder="이메일 형식 예시: matdori@naver.com"
+            disabled={validCert === true}
           />
           <div className="valid-feedback"></div>
-          <div className="invalid-feedback">이메일 형식이 맞지 않습니다 예시 : matdori@naver.com </div>
+          <div className="invalid-feedback">
+            이메일 형식이 맞지 않습니다. 예시: matdori@naver.com
+          </div>
         </div>
+        <div className="col-sm-6">
+          <button
+            className="btn btn-primary ms-2"
+            type="button"
+            onClick={handleCertSend}
+            disabled={certSent}
+          >
+            {certSent ? "재전송" : "인증번호 전송"}
+          </button>
+        </div>
+      </div>
 
-        <div className="mb-3">
-          <label htmlFor="certNumber" className="form-label">
-            인증번호
-          </label>
+      <div className="mb-3">
+        <label htmlFor="certNumber" className="form-label me-2">
+          인증번호
+        </label>
+        <div className="col-sm-6">
           <div className="input-group">
             <input
               type="text"
-              className={`form-control
-                ${!validCert ? "is-invalid" : ""}
-              `}
+              className={`form-control ${validCert === false ? "is-invalid" : validCert === true ? "is-valid" : ""}`}
+
               id="certNumber"
               name="certNumber"
               value={certNumber}
               onChange={handleCertInputChange}
-              onBlur={checkCertNumber}
               placeholder="인증번호를 입력하세요"
               required
             />
+            {validCert === false && (
+              <div className="invalid-feedback">인증번호가 일치하지 않습니다.</div>
+            )}
+            {validCert === true && (
+              <div className="valid-feedback">확인완료</div>
+            )}
+          </div>
+          <div className="col-sm-6">
             <button
               className="btn btn-primary"
               type="button"
-              onClick={handleCertSend}
-              disabled={certSent} // 이미 인증번호를 보냈다면 버튼 비활성화
+              onClick={checkCertNumber} // 입력 확인 로직을 실행할 수 있도록 처리
+              disabled={validCert === true} // 인증 완료 시 버튼 비활성화
             >
-              {certSent ? "재전송" : "인증번호 전송"}
+              인증번호 확인
             </button>
-            <div className="invalid-feedback">인증번호가 일치하지 않습니다.</div>
           </div>
-        </div> 
+        </div>
+      </div>
 
 
-        <div className="mb-3">
-          <label htmlFor="busId" className="form-label">
-            사업자 우편번호
-          </label>
+
+      <div className="mb-3">
+        <label htmlFor="busId" className="form-label">
+          사업자 우편번호
+        </label>
+        <div className="col-sm-6">
           <input
             type="text"
             className={`form-control
@@ -352,11 +425,13 @@ const BusJoin = () => {
           <div className="valid-feedback"></div>
           <div className="invalid-feedback">우편번호 5~6자리 숫자를 입력하세요 </div>
         </div>
+      </div>
 
-        <div className="mb-3">
-          <label htmlFor="busId" className="form-label">
-            기본주소
-          </label>
+      <div className="mb-3">
+        <label htmlFor="busId" className="form-label">
+          기본주소
+        </label>
+        <div className="col-sm-6">
           <input
             type="text"
             className="form-control"
@@ -367,11 +442,13 @@ const BusJoin = () => {
             required
           />
         </div>
+      </div>
 
-        <div className="mb-3">
-          <label htmlFor="busId" className="form-label">
-            상세주소
-          </label>
+      <div className="mb-3">
+        <label htmlFor="busId" className="form-label">
+          상세주소
+        </label>
+        <div className="col-sm-6">
           <input
             type="text"
             className="form-control"
@@ -381,10 +458,17 @@ const BusJoin = () => {
             onBlur={checkJoin}
           />
         </div>
+      </div>
 
-        <button type="button" className="btn btn-primary" onClick={handleJoinClick}>
-          회원가입
-        </button>
+      <button
+        type="button"
+        className="btn btn-primary"
+        onClick={handleJoinClick}
+        disabled={!areAllInputsValid()} // 버튼 활성화 여부 설정
+      >
+        {areAllInputsValid() ? '가입하기' : '미입력된 항목 있음'}
+      </button>
+
     </div>
   );
 };
