@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const BusJoin = () => {
   const inputRef = useRef();
+  const inputRefRegNo = useRef();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -33,6 +34,7 @@ const BusJoin = () => {
   });
 
   const [duplicateId, setDuplicateId] = useState(false);
+  const [duplicateRegNo, setDuplicateRegNo] = useState(false);
   const [certSent, setCertSent] = useState(false);
   const [certNumber, setCertNumber] = useState("");
   const [validCert, setValidCert] = useState(null);
@@ -42,6 +44,10 @@ const BusJoin = () => {
 
     if (name === "busId") {
       setDuplicateId(false);
+    }
+
+    if (name === "busRegNo") {
+      setDuplicateRegNo(false);
     }
 
     setFormData({
@@ -141,31 +147,45 @@ const BusJoin = () => {
   };
 
   const handleJoinClick = () => {
-    // checkCertNumber();
-
     axios.get(`http://localhost:8080/business/check/${formData.busId}`)
-      .then((response) => {
+      .then((idResponse) => {
         // 중복 아이디 체크
-        if (response.data.exists) {
+        if (idResponse.data.exists) {
           console.log('중복된 아이디입니다. 다른 아이디를 사용하세요.');
           setDuplicateId(true); // 중복된 아이디 발견 시 duplicateId를 true로 설정
           inputRef.current.focus(); // 중복 오류 발생 시 해당 입력 필드로 포커스 이동
         } else {
           setDuplicateId(false);
-          axios.post('http://localhost:8080/business/join', formData)
-            .then((response) => {
-              console.log('회원가입 성공:', response.data);
-              navigate('/join/success');
+          // 여기서 사업자 등록번호 중복 체크
+          axios.get(`http://localhost:8080/business/checkRegNo/${formData.busRegNo}`)
+            .then((regNoResponse) => {
+              // 중복 사업자 등록번호 체크
+              if (regNoResponse.data.exists) {
+                console.log('중복된 사업자 등록번호입니다. 다른 번호를 입력하세요.');
+                setDuplicateRegNo(true); // 중복된 사업자 등록번호 발견 시 duplicateRegNo를 true로 설정
+                inputRefRegNo.current.focus(); // 중복 오류 발생 시 해당 입력 필드로 포커스 이동
+              } else {
+                 setDuplicateRegNo(false);
+                axios.post('http://localhost:8080/business/join', formData)
+                  .then((joinResponse) => {
+                    console.log('회원가입 성공:', joinResponse.data);
+                    navigate('/join/success');
+                  })
+                  .catch((joinError) => {
+                    console.error('회원가입 실패:', joinError);
+                  });
+              }
             })
-            .catch((error) => {
-              console.error('회원가입 실패:', error);
+            .catch((regNoError) => {
+              console.error('사업자 등록번호 중복 확인 실패:', regNoError);
             });
         }
       })
-      .catch((error) => {
-        console.error('아이디 중복 확인 실패:', error);
+      .catch((idError) => {
+        console.error('아이디 중복 확인 실패:', idError);
       });
   };
+  
 
   // const areAllInputsValid = () => {
   //   // 입력 값의 유효성 검사
@@ -254,7 +274,7 @@ const BusJoin = () => {
             type="text"
             className={`form-control
               ${result.busRegNo === true ? 'is-valid' : ''}
-              ${result.busRegNo === false ? 'is-invalid' : ''}
+              ${result.busRegNo === false || duplicateRegNo ? 'is-invalid' : ''}
             `}
             id="busRegNo"
             name="busRegNo"
@@ -262,9 +282,11 @@ const BusJoin = () => {
             onBlur={checkJoin}
             placeholder="사업자 등록 번호 10자리숫자를 입력하세요"
             required
+            ref={inputRefRegNo} // ref 설정
           />
           <div className="valid-feedback"></div>
-          <div className="invalid-feedback">사업자 등록 번호 10자리숫자를 입력하세요 예시 : 1234567890</div>
+          <div className="invalid-feedback">
+            {duplicateRegNo ? '이미 사용중인 사업자 등록번호입니다.' :  '사업자 등록 번호 10자리숫자를 입력하세요 예시 : 1234567890'}</div>
         </div>
       </div>
 
