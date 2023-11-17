@@ -1,11 +1,17 @@
+// BusJoin.js
+
 import React, { useRef, useState } from "react";
-import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const BusJoin = () => {
-  const inputRef = useRef(); 
   const navigate = useNavigate();
+  const inputRef = useRef(); 
 
+    // 중복된 아이디 상태
+    const [duplicateId, setDuplicateId] = useState(false);
+
+  //데이터입력
   const [formData, setFormData] = useState({
     busId: "",
     busPw: "",
@@ -19,6 +25,7 @@ const BusJoin = () => {
     busAddr2: "",
   });
 
+  //회원가입창 입력조건 검사결과
   const [result, setResult] = useState({
     busId: null,
     busPw: null,
@@ -32,26 +39,9 @@ const BusJoin = () => {
     busAddr2: null,
   });
 
-  const [duplicateId, setDuplicateId] = useState(false);
-  const [certSent, setCertSent] = useState(false);
-  const [certNumber, setCertNumber] = useState("");
-  const [validCert, setValidCert] = useState(true);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    if (name === "busId") {
-      setDuplicateId(false);
-    }
-
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-
+  //정규식이용한 회원가입창 입력조건 검사
+  //입력데이터가 변하면 검사결과가 자동으로 계산되도록 처리
   const checkJoin = () => {
-    // 유효성 검사 로직
     //console.log("bus입력정보가 변했습니다");
     const idRegx = /^[a-z][a-z0-9-]{4,19}$/;
     const idMatch = formData.busId.length === 0 ? null : idRegx.test(formData.busId);
@@ -85,8 +75,29 @@ const BusJoin = () => {
     });
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "busId") {
+      setDuplicateId(false); // 아이디가 변경될 때 중복 상태 초기화
+    }
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+    // if (name === "busPw" || name === "busPwCheck") {
+    //   checkJoin(); // 비밀번호나 확인값 변경 시 확인 함수 호출
+    // }
+
+    //checkJoin();
+    
+  };
+
+
+  const [certSent, setCertSent] = useState(false); // 인증번호 전송 여부
+  const [certNumber, setCertNumber] = useState(""); // 입력된 인증번호
+  const [validCert, setValidCert] = useState(true); // 인증번호 일치 여부
+
   const handleCertSend = () => {
-    // 인증번호 전송 처리
     console.log('이메일 주소:', formData.busEmail); // 콘솔 로그 추가
     axios.post('http://localhost:8080/react/rest/cert/send', { certEmail: formData.busEmail })
       .then((response) => {
@@ -98,14 +109,14 @@ const BusJoin = () => {
         // 에러 처리
       });
   };
+  
 
   const handleCertInputChange = (e) => {
-    // 입력된 인증번호 처리
+    // 입력된 인증번호 상태 변경
     setCertNumber(e.target.value);
   };
 
   const checkCertNumber = () => {
-    // 인증번호 확인 처리
     axios.post('http://localhost:8080/react/rest/cert/check', {
       certEmail: formData.busEmail,
       certNumber: certNumber // 입력된 인증번호
@@ -126,18 +137,23 @@ const BusJoin = () => {
       });
   };
 
-  const handleJoinClick = () => {
-    // checkCertNumber();
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+        // 인증번호 확인
+        checkCertNumber();
+  
     axios.get(`http://localhost:8080/business/check/${formData.busId}`)
       .then((response) => {
-        // 중복 아이디 체크
         if (response.data.exists) {
           console.log('중복된 아이디입니다. 다른 아이디를 사용하세요.');
+          // 중복된 아이디 처리
           setDuplicateId(true); // 중복된 아이디 발견 시 duplicateId를 true로 설정
           inputRef.current.focus(); // 중복 오류 발생 시 해당 입력 필드로 포커스 이동
         } else {
-          setDuplicateId(false);
+          setDuplicateId(false); // 중복 아이디가 없을 시 duplicateId를 false로 설정
+          // 중복된 아이디가 없으면 회원가입 진행
           axios.post('http://localhost:8080/business/join', formData)
             .then((response) => {
               console.log('회원가입 성공:', response.data);
@@ -145,22 +161,28 @@ const BusJoin = () => {
             })
             .catch((error) => {
               console.error('회원가입 실패:', error);
+              // 회원가입 실패 시의 처리
             });
         }
       })
       .catch((error) => {
         console.error('아이디 중복 확인 실패:', error);
+        // 중복 확인 실패 시의 처리
       });
+      
   };
 
-  // const areAllInputsValid = () => {
-  //   // 입력 값의 유효성 검사
-  // };
+  
+  
+  
+
+
 
   return (
     <div className="container mt-5">
       <h1>사업체 회원가입</h1>
-      <div className="mb-3">
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
           <label htmlFor="busId" className="form-label">
             사업자 아이디
           </label>
@@ -382,9 +404,10 @@ const BusJoin = () => {
           />
         </div>
 
-        <button type="button" className="btn btn-primary" onClick={handleJoinClick}>
+        <button type="submit" className="btn btn-primary">
           회원가입
         </button>
+      </form>
     </div>
   );
 };
