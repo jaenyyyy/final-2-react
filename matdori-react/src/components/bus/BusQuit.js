@@ -38,7 +38,7 @@ const BusQuit = () => {
     } catch (error) {
       console.error("회원 탈퇴 요청 중 오류 발생:", error);
       alert("회원 탈퇴 요청 중 오류가 발생했습니다.");
-    }
+    } 
   };
   
 
