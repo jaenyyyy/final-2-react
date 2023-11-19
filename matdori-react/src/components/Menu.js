@@ -55,7 +55,7 @@ const Menu = (props) => {
                             <NavLink className={`nav-link ${location.pathname === '/bus-myreslist' ? 'active' : ''}`} to="/bus-myreslist">내 매장목록</NavLink>
                             </li>
                             <li className="nav-item">
-                                <NavLink className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} to="/">메뉴2</NavLink>
+                                <NavLink className={`nav-link ${location.pathname === '/Bus-quit' ? 'active' : ''}`} to="/bus-quit">탈퇴하기</NavLink>
                             </li>
                             <li className="nav-item">
                                 <NavLink className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} to="/">메뉴3</NavLink>
