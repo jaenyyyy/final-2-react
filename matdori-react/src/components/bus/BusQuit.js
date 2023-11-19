@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { busIdState } from "../../recoil";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useNavigate } from "react-router-dom";
+
 
 const BusQuit = () => {
   const [password, setPassword] = useState("");
-  const busId = useRecoilValue(busIdState);
+  //const busId = useRecoilValue(busIdState);
+  const [busId, setBusId] = useRecoilState(busIdState);
+  const navigate = useNavigate();
+  
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -12,13 +17,17 @@ const BusQuit = () => {
 
   const handleWithdrawal = async () => {
     try {
-      const response = await fetch(`/quit/${busId}?password=${password}`, {
+      const response = await fetch(`http://localhost:8080/business/quit/${busId}?password=${password}`, {
         method: "DELETE",
       });
-
+  
       if (response.ok) {
         // 회원 탈퇴 성공
         alert("회원 탈퇴가 완료되었습니다.");
+        localStorage.removeItem('loggedInBusId'); // 로그아웃: 로컬 스토리지에서 아이디 제거
+        localStorage.removeItem('loggedInToken'); // 로컬 스토리지에서 토큰 제거
+        setBusId(''); // Recoil 상태 비우기
+        navigate('/bus-quitsuccess');
       } else if (response.status === 401) {
         // 비밀번호 오류
         alert("비밀번호가 올바르지 않습니다.");
@@ -31,6 +40,7 @@ const BusQuit = () => {
       alert("회원 탈퇴 요청 중 오류가 발생했습니다.");
     }
   };
+  
 
   return (
     <div style={{ fontFamily: "Arial, sans-serif", color: "#333" }}>
