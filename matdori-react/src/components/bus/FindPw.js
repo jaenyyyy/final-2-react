@@ -10,18 +10,32 @@ const FindPw = () => {
 
   const handleFindPassword = (e) => {
     e.preventDefault();
+  
+    console.log("전송하는 데이터:", { id, email, busRegNo }); // 전송되는 데이터 확인
+  
+    axios.post('http://localhost:8080/business/findPw', {
+  busId: id,
+  busEmail: email,
+  busRegNo: busRegNo
+})
+  .then((response) => {
+    console.log("응답 받은 데이터:", response.data);
+    if (response.data === "임시 비밀번호를 이메일로 전송하였습니다.") {
+      setPasswordSent(true);
+      setNoMatch(false);
+    } else {
+      setPasswordSent(false);
+      setNoMatch(true);
+    }
+  })
+  .catch((error) => {
+    console.error('비밀번호 찾기에 실패했습니다:', error);
+    setPasswordSent(false);
+    setNoMatch(true);
+  });
 
-    axios.post('http://localhost:8080/business/findPw', { id, email, busRegNo })
-      .then((response) => {
-        setPasswordSent(true);
-        setNoMatch(false);
-      })
-      .catch((error) => {
-        console.error('비밀번호 찾기에 실패했습니다:', error);
-        setPasswordSent(false);
-        setNoMatch(true);
-      });
   };
+  
 
   return (
     <div className="container mt-5">
