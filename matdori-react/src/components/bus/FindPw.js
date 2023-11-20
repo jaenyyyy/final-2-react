@@ -12,7 +12,7 @@ const FindPw = () => {
 
   const handleFindPassword = (e) => {
     e.preventDefault();
-    setLoading(true); // 요청 보내기 전 로딩 상태 활성화
+    setLoading(true); // 요청 보내기 전 로딩 상태 활성화1
 
     axios.post('http://localhost:8080/business/findPw', {
       busId: id,
@@ -35,7 +35,7 @@ const FindPw = () => {
         console.error('비밀번호 찾기에 실패했습니다:', error);
         setPasswordSent(false);
         setNoMatch(true);
-      });
+      }); 
 
   };
 
