@@ -15,6 +15,7 @@ const MenuByRes = () => {
     menuTypeName: "",
     resNo: resNo
   });
+  const [file, setFile] = useState(null); // 파일 상태 추가
 
 
   // const [newData, setNewData] = useState();
@@ -90,7 +91,8 @@ const MenuByRes = () => {
   //--------------모달 열고 닫기 
   const bsModal = useRef();
   const bsModal2 = useRef();
-  const deleteModal = useRef();
+  const deleteModal = useRef(); 
+  const deleteMenuModal = useRef(); 
 
 
   //------------메뉴타입명 수정
@@ -129,6 +131,18 @@ const MenuByRes = () => {
 
     // clearProfile();
   };
+  const openDeleteMenuModal = () => {
+    const modal = new Modal(deleteMenuModal.current);
+    modal.show();
+  };
+  const closeDeleteMenuModal = () => {
+    const modal = Modal.getInstance(deleteMenuModal.current);
+    modal.hide();
+
+    // clearProfile();
+  };
+  
+  
 
   const changeMenuChange = (e) => {
     setMenuData({
@@ -196,20 +210,6 @@ const MenuByRes = () => {
     );
   };
 
-  // const addMenu = () => {
-  //   axios({
-  //       url: `http://localhost:8080/menu/${menu.menuTypeNo}`,
-  //       method: "post",
-  //       data: menuData
-  //   }).then(response => {
-  //       if (response.data != null) {
-  //           alert("성공")
-  //       }
-
-  //       setMenuData('')
-  //   });
-  // };
-
   ///--사원 불러오기
   const [menuList, setMenuList] = useState([]);
 
@@ -252,12 +252,56 @@ const MenuByRes = () => {
   });
 
   const handleFileChange = (e) => {
-    setMenuData({
-      ...menuData,
-      file: e.target.files[0] // 파일 데이터를 menuData 상태에 추가
-    });
+    setFile(e.target.files[0]); // 파일 변경 이벤트 핸들러
   };
 
+  // 메뉴 수정 핸들러
+  const handleEditMenu = (menu) => {
+    // 메뉴 데이터를 수정 모달에 설정
+    setMenuData({
+      menuName: menu.menuName,
+      menuPrice: menu.menuPrice,
+      menuContent: menu.menuContent,
+      attach_no: menu.attachNo
+      
+    });
+
+   openModal();
+  };
+
+  // 메뉴 삭제 핸들러
+  const handleDeleteMenu = (menuNo) => {
+    axios.delete(`http://localhost:8080/menu/${menuNo}`)
+      .then(response => {
+        // 삭제 성공 시 UI 업데이트
+        loadMenuTypeList();
+      })
+      .catch(error => {
+        console.error("메뉴 삭제 실패: ", error);
+      });
+  };
+const deleteMenu = (target) => {
+    setMenuType({ ...target })
+    openDeleteMenuModal();
+  }
+
+  const removeMenu = () => {
+    axios({
+      url: `http://localhost:8080/menu/delete/${menuData.menuNo}`, // URL 수정
+      method: 'delete'
+    }).then(response => {
+      if (response.data == null) { 
+        alert("실패"); 
+      } else { 
+        alert("삭제되었습니다"); 
+        closeDeleteMenuModal(); // 모달을 닫는 함수 수정
+        setMenuData({ menuNo: 0, menuName: "", resNo: resNo, menuPrice: "", menuContent: "", attach_no: "" });
+        loadMenuTypeList(); // 메뉴 목록을 다시 불러옵니다.
+      }
+    }).catch(error => {
+      console.error("삭제 실패: ", error);
+    });
+  };
 
   return (
     <div className="container mt-5">
@@ -303,30 +347,30 @@ const MenuByRes = () => {
       </table>
       {
         menuList.length > 0 &&
-       <div className="menu-list-container">
-  <h3>메뉴 리스트</h3>
-  <div className="row">
-    {menuList.map(menu => (
-      <div className="col-md-4" key={menu.menuNo}>
-        <div className="card">
-          {/* 이미지 표시 부분 */}
-          <img 
-            src={menu.menuImage || `http://localhost:8080/path/to/image/${menu.attachNo}`} 
-            className="card-img-top" 
-            alt={menu.menuName} 
-          />
-          <div className="card-body">
-            <h5 className="card-title">{menu.menuName}</h5>
-            <p className="card-text">{menu.menuContent}</p>
-            <p className="card-text">{menu.menuPrice}원</p>
-            <button className="btn btn-primary">수정</button>
-            <button className="btn btn-danger">삭제</button>
+        <div className="menu-list-container">
+          <h3>메뉴 리스트</h3>
+          <div className="row">
+            {menuList.map(menu => (
+              <div className="col-md-4" key={menu.menuNo}>
+                <div className="card">
+                  {/* 이미지 표시 부분 */}
+                  <img
+                    src={menu.menuImage || `http://localhost:8080/path/to/image/${menu.attachNo}`}
+                    className="card-img-top"
+                    alt={menu.menuName}
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">{menu.menuName}</h5>
+                    <p className="card-text">{menu.menuContent}</p>
+                    <p className="card-text">{menu.menuPrice}원</p>
+                    <button className="btn btn-primary" onClick={() => handleEditMenu(menu)}>수정</button>
+                    <button className="btn btn-danger" onClick={() => deleteMenu(menu)}>삭제</button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
-    ))}
-  </div>
-</div>
       }
       <div className="modal fade" ref={bsModal} id="exampleModal"
         data-bs-backdrop="static" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -353,7 +397,7 @@ const MenuByRes = () => {
               </div>
               <div className="mb-3">
                 <label htmlFor="menuImage" className="form-label">이미지</label>
-                <input type="file" className="form-control" value={menuData.attach_no} name="menuImage" onChange={changeMenuChange} />
+                <input type="file" className="form-control" name="menuImage" onChange={handleFileChange} />
               </div>
             </div>
             <div className="modal-footer">
@@ -397,6 +441,61 @@ const MenuByRes = () => {
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={closeDeleteModal}>닫기</button>
 
               <button type="button" className="btn btn-danger" onClick={removeMenuType}>확인</button>
+            </div>
+          </div>
+        </div>
+      </div>
+       <div className="modal fade" ref={bsModal2} id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="exampleModalLabel">수정</h1>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+
+              <input type="text" className="form-control" name="menuTypeName" onChange={changeInfo} value={menuType.menuTypeName} />
+
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={closeModal2}>닫기</button>
+              <button type="button" className="btn btn-primary" onClick={updateMenuType}>변경하기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="modal fade" ref={deleteModal} id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="staticBackdropLabel">메뉴타입 삭제</h1>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              '{menuType.menuTypeName}'를 삭제하시겠습니까?
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={closeDeleteModal}>닫기</button>
+
+              <button type="button" className="btn btn-danger" onClick={removeMenuType}>확인</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="modal fade" ref={deleteMenuModal} id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="staticBackdropLabel">메뉴 삭제</h1>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              '{menuData.menuName}'를 삭제하시겠습니까?
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={closeDeleteMenuModal}>닫기</button>
+
+              <button type="button" className="btn btn-danger" onClick={removeMenu}>확인</button>
             </div>
           </div>
         </div>
