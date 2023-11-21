@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { busIdState } from '../../recoil';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const OuterContainer = styled.div`
   background: #fff;
@@ -66,25 +67,30 @@ const ResHome = () => {
   const { resNo } = useParams();
   const busId = useRecoilValue(busIdState);
   const navigate = useNavigate();
-  const [restaurant, setRestaurant] = useState({ resName: '수정필요' });
+  const [restaurant, setRestaurant] = useState({});
 
   useEffect(() => {
-    // 데이터를 가져오는 fetch 요청
-    fetch(`http://localhost:8080/business/${busId}/${resNo}`, {
+    // 데이터를 가져오는 axios 요청
+    axios(`http://localhost:8080/business/${busId}/${resNo}`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      // headers: {
+      //   'Content-Type': 'application/json',
+      // },
     })
-    .then((response) => response.json())
-    .then((data) => {
-      setRestaurant(data); // 가져온 데이터를 상태에 저장
+    .then((response) => response.json()
+    .then(response=>{
+      setRestaurant(response.data);
     })
+    )
+    // .then((data) => {
+    //   setRestaurant(response.data); // 가져온 데이터를 상태에 저장
+    // })
     .catch((error) => {
       console.error('Error fetching data:', error);
       setRestaurant({ resName: restaurant.resName }); // 오류 발생 시 오류 메시지 저장
     });
   }, [busId, resNo]);
+  console.log(restaurant);
 
   const handleMenuClick = (path) => {
     navigate(`/business/${busId}/${resNo}/${path}`);
