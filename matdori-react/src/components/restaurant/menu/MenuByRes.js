@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useRecoilValue } from "recoil";
 import { busIdState } from '../../../recoil';
 import { Modal } from "bootstrap";
+import './MenuByRes.css'; // CSS 파일 import
 
 
 const MenuByRes = () => {
@@ -11,12 +12,15 @@ const MenuByRes = () => {
   const { resNo } = useParams();
   const [menuTypeList, setMenuTypeList] = useState([]);
   const [menuType, setMenuType] = useState({
-    menuTypeNo: 0,
+    menuTypeNo: "",
     menuTypeName: "",
     resNo: resNo
   });
   const [file, setFile] = useState(null); // 파일 상태 추가
+  const [currentMenuTypeNo, setCurrentMenuTypeNo] = useState(null);
+  const [previousImageUrl, setPreviousImageUrl] = useState(null);
 
+  const fileChooser = useRef();
 
   // const [newData, setNewData] = useState();
 
@@ -28,8 +32,8 @@ const MenuByRes = () => {
 
   const clearMenuType = () => {
     setMenuType({
-      MenuTypeNo: "",
-      MenuTypeName: "",
+      menuTypeNo: "",
+      menuTypeName: "",
       resNo: resNo
     })
   }
@@ -50,7 +54,7 @@ const MenuByRes = () => {
       url: `http://localhost:8080/menuType/list/${resNo}`,
       method: "get"
     }).then((response) => {
-      console.log(response.data)
+      // console.log(response.data)
       setMenuTypeList(response.data);
     });
   };
@@ -92,9 +96,9 @@ const MenuByRes = () => {
   //--------------모달 열고 닫기 
   const bsModal = useRef();
   const bsModal2 = useRef();
-  const deleteModal = useRef(); 
-  const deleteMenuModal = useRef(); 
-  const editMenuModal=useRef();
+  const deleteModal = useRef();
+  const deleteMenuModal = useRef();
+  const editMenuModal = useRef();
 
 
   //------------메뉴타입명 수정
@@ -102,17 +106,6 @@ const MenuByRes = () => {
     setMenuType({ ...target })
     openModal2();
   };
-  const openModal = () => {
-    const modal = new Modal(bsModal.current);
-    modal.show();
-  };
-  const closeModal = () => {
-    const modal = Modal.getInstance(bsModal.current);
-    modal.hide();
-  };
-
-
-
   const openModal2 = () => {
     const modal = new Modal(bsModal2.current);
     modal.show();
@@ -120,6 +113,78 @@ const MenuByRes = () => {
   const closeModal2 = () => {
     const modal = Modal.getInstance(bsModal2.current);
     modal.hide();
+  };
+
+  const saveMenu = async () => {
+    try {
+      // FormData 객체 생성
+      const formData = new FormData();
+      formData.append("menuName", menuData.menuName);
+      formData.append("actorImage", menuData.menuImage);
+
+      // actor 정보와 이미지를 함께 서버로 전송
+      const response = await axios.post(
+        `${process.env.REACT_APP_REST_API_URL}/menu/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // 등록 후 목록을 다시 불러오기
+      cellClick();
+      closeModal(); // 모달 닫기
+
+    } catch (error) {
+      console.error("Failed to save actor:", error);
+    }
+  };
+
+  //메뉴 미리보기 함수
+  const [previewImage, setPreviewImage] = useState(null);
+
+  //이미지가 선택될 때 호출되는 함수
+  const handleImageChange = (event) => {
+    const selectedFile = event.target.files[0];
+
+    if (selectedFile) {
+      //선택된 파일이 있을 경우 파일 정보를 저장
+      setMenuData({
+        ...menuData,
+        menuImage: selectedFile,
+      });
+
+      //선택된 파일이 있을 경우 미리보기 업데이트
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(selectedFile);
+    } else {
+      setMenuData({
+        ...menuData,
+        menuImage: null,
+      });
+
+      setPreviewImage(null);
+    }
+  };
+
+
+
+
+  const openModal = () => {
+    const modal = new Modal(bsModal.current);
+    modal.show();
+  };
+  const closeModal = () => {
+    const modal = Modal.getInstance(bsModal.current);
+    modal.hide();
+
+    
+
 
     // clearProfile();
   };
@@ -150,59 +215,79 @@ const MenuByRes = () => {
     const modal = Modal.getInstance(editMenuModal.current);
     modal.hide();
   };
-  
-  
+
+
 
   const changeMenuChange = (e) => {
     setMenuData({
       ...menuData,
       [e.target.name]: e.target.value,
-      menuTypeNo: menuType.menuTypeNo
+      
     });
   };
 
 
   const addMe = (target) => {
-    console.log("addMe target:", target);
+    console.log("Selected target:", target);
+    console.log("번호:", target.menuTypeNo);
     setMenuData(prevData => ({
       ...prevData,
       menuTypeNo: target.menuTypeNo
     }));
-    openModal();
-  };
-
-  // 메뉴 타입 선택 시
-const handleMenuTypeSelect = (selectedMenuTypeNo) => {
-  setMenuData(prevData => ({
-    ...prevData,
-    menuTypeNo: selectedMenuTypeNo
-  }));
-};
-
-  const addMenu = () => {
-    console.log("Current menuData before sending:", menuData);
-    axios({
-      url: "http://localhost:8080/menu/", // 메뉴 추가 API 엔드포인트
-      method: "post",
-      data: {
-        resNo: menuData.resNo,
-        menuTypeNo: menuData.menuTypeNo, 
-        menuName: menuData.menuName,
-        menuPrice: menuData.menuPrice,
-        menuContent: menuData.menuContent
-      }
-    }).then(response => {
-      if (response.data != null) {
-        alert("메뉴 추가 성공");
-        closeModal();
-        loadMenuTypeList(); // 메뉴 목록을 다시 불러오는 함수
-      }
-    }).catch(error => {
-      console.error("메뉴 추가 실패: ", error);
-      alert("메뉴 추가 실패");
-    });
-  };
+      openModal();
   
+  };
+
+  const addMenu = async () => {
+    console.log(menuData);
+
+    try {
+      const menuTypeNo  = menuData.menuTypeNo;
+    console.log("menuTypeNo="+menuTypeNo);
+      // menuTypeNo 검증
+      if (menuTypeNo<1) {
+        console.error('menuTypeNo is undefined or not set');
+        return;
+      }
+  
+      // FormData 객체 생성
+      const formData = new FormData();
+      formData.append("menuTypeNo", menuTypeNo);
+      formData.append("menuName", menuData.menuName);
+      formData.append("menuPrice", menuData.menuPrice);
+      formData.append("menuContent", menuData.menuContent);
+      console.log("formData="+formData);
+
+      
+      // menuImage가 존재하는 경우에만 추가
+      if (menuData.menuImage && menuData.menuImage instanceof File) {
+        formData.append("menuImage", menuData.menuImage);
+      }
+  
+      // 서버로 POST 요청
+      const response = await axios.post(
+        `http://localhost:8080/menu/upload/resNo/${menuData.resNo}/menuTypeNo/${menuTypeNo}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+  
+
+      // 등록 후 목록을 다시 불러오기
+      if (response.status === 200) { // 성공적으로 등록되었을 때의 상태 코드 확인
+        alert("메뉴가 성공적으로 등록되었습니다.");
+        clearMenuList(); // 입력 필드 초기화
+        cellClick({ menuTypeNo: menuData.menuTypeNo }); // 목록 새로고침
+      }
+      closeModal(); // 모달 닫기
+    } catch (error) {
+      console.error("메뉴 등록에 실패했습니다:", error);
+    }
+  };
+
 
 
   const deleteMenuType = (target) => {
@@ -221,6 +306,7 @@ const handleMenuTypeSelect = (selectedMenuTypeNo) => {
       setMenuType({ menuTypeNo: 0, menuTypeName: "", resNo: resNo });
 
       loadMenuTypeList();
+
     }
 
     );
@@ -229,85 +315,233 @@ const handleMenuTypeSelect = (selectedMenuTypeNo) => {
   ///--메뉴 불러오기
   const [menuList, setMenuList] = useState([]);
 
-  // const cellClick = (target) => {
-  //     setDept({ ...target })
-  //     loadEmpList();
-  // };
-  const cellClick = (target) => {
+  const cellClick = (menuType) => {
+    console.log(menuType);
+    if (!menuType || !menuType.menuTypeNo) {
+      console.error('Invalid target or target.menuTypeNo is undefined');
+      return;
+    }
     axios({
-      url: `http://localhost:8080/menu/${target.menuTypeNo}/detail`,
-      method: 'get',  // 'post' 대신 'get' 메서드 사용
-    }).then(response => {
-      console.log(response.data);
-      setMenuList(response.data);
+      url: `http://localhost:8080/menu/list/${menuType.menuTypeNo}`,
+      method: 'get',
+    }).then(async response => {
+      // console.log("response="+response.data);
+      // 각 메뉴에 대한 이미지를 불러오고 menuList를 업데이트
+      const updatedMenuList = await Promise.all(response.data.map(async (menu) => {
+        // console.log(menu.menuNo);
+        const imageUrl = await loadMenuImage(menu.menuNo) || 'path_to_default_image.jpg';
+        return { ...menu, menuImage: imageUrl };
+      }));
+
+      setMenuList(updatedMenuList);
     }).catch(error => {
-      console.error("Error loading menus: ", error);
+      console.error("오류남", error);
     });
   };
 
-// 메뉴 리스트 초기화 함수
-const clearMenuList = () => {
-  setMenuData({
-    resNo: resNo,
-    menuTypeNo: menuType.menuTypeNo,
-    menuName: "",
-    menuPrice: "",
-    menuContent: "",
-    attach_no: ""
-  });
+  const loadMenuImage = async (menuNo) => {
+  try {
+    const imageResponse = await axios({
+      url: `http://localhost:8080/image/menu/${menuNo}`,
+      method: "get",
+      responseType: "arraybuffer",
+    });
+
+    // 이전 URL이 있으면 해제
+    if (previousImageUrl) {
+      URL.revokeObjectURL(previousImageUrl);
+    }
+
+    const blob = new Blob([imageResponse.data], { type: imageResponse.headers['content-type'] });
+    const newImageUrl = URL.createObjectURL(blob);
+
+    // 새 URL을 previousImageUrl 상태에 저장
+    setPreviousImageUrl(newImageUrl);
+    return newImageUrl;
+
+  } catch (error) {
+    console.error("Failed to load menu image:", error);
+    return null;
   }
+};
+
+  useEffect(() => {
+    cellClick();
+  }, []);
+
+  // 메뉴 리스트 초기화 함수
+  const clearMenuList = () => {
+    setMenuData(prevData =>({
+      // resNo: resNo,
+      // menuTypeNo: menuType.menuTypeNo,
+      ...prevData,// 현재 menuTypeNo를 유지하면서 나머지 상태를 초기화합니다.
+      menuNo: null,
+      menuName: "",
+      menuPrice: "",
+      menuContent: "",
+      menuImage: null
+    }));
+  };
   //메뉴 등록
   const [menuData, setMenuData] = useState({
     resNo: resNo,
-    menuTypeNo: menuType.menuTypeNo, 
-    menuNo: 0,
+    menuTypeNo: "",
+    menuNo: null,
     menuName: "",
     menuPrice: "",
     menuContent: "",
-    attach_no: ""
+    menuImage: null
   });
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]); // 파일 변경 이벤트 핸들러
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      // 파일 미리보기 로직
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+        // 여기에서 menuData.menuImage도 업데이트
+        setMenuData(prevData => ({
+          ...prevData,
+          menuImage: selectedFile
+        }));
+      };
+      reader.readAsDataURL(selectedFile);
+    } else {
+      setFile(null);
+      setMenuData(prevData => ({
+        ...prevData,
+        menuImage: null
+      }));
+      setPreviewImage(null);
+    }
   };
 
   // 메뉴 수정 핸들러
-  const handleEditMenu = (menu) => {
-    // 메뉴 데이터를 수정 모달에 설정
-    setMenuData({
-      menuNo: menu.menuNo,
-      menuName: menu.menuName,
-      menuPrice: menu.menuPrice,
-      menuContent: menu.menuContent,
-      attach_no: menu.attachNo,
-      menuTypeNo: menu.menuTypeNo // 메뉴 타입 번호 추가
-    });
+  // const handleEditMenu = (menuData) => {
+  //   // 메뉴 데이터를 수정 모달에 설정
+  //   setMenuData({
+  //     menuNo: menuData.menuNo,
+  //     menuName: menuData.menuName,
+  //     menuPrice: menuData.menuPrice,
+  //     menuContent: menuData.menuContent,
+  //     menuImage: menuData.menuImage,
+  //     menuTypeNo: menuData.menuTypeNo // 메뉴 타입 번호 추가
+  //   });
 
-   openEditMenuModal();
+  //   openEditMenuModal();
+  // };
+  const editMenu = async (target) => {
+    // 메뉴 정보를 모달에 표시하기 전에 불러오기
+    const { menuNo } = target;
+
+    // menuNo를 사용하여 메뉴 정보와 이미지 정보를 불러오기
+    // 해당 정보를 state에 업데이트하고 모달 열기
+    loadMenuDetails(menuNo);
+    openEditMenuModal();
   };
-
-  // 메뉴 삭제 핸들러
-  const handleDeleteMenu = (menuNo) => {
-    axios.delete(`http://localhost:8080/menu/${menuNo}`)
-      .then(response => {
-        // 삭제 성공 시 UI 업데이트
-        loadMenuTypeList();
-      })
-      .catch(error => {
-        console.error("메뉴 삭제 실패: ", error);
+  const loadMenuDetails = async (menuNo) => {
+    try {
+      // 메뉴 정보를 불러오는 API 호출
+      const menuResponse = await axios({
+        url: `http://localhost:8080/menu/selectOneByMenuNo/${menuNo}`, 
+        method: "get",
       });
+     
+
+      // 비어있을 경우 처리
+      if (!menuResponse.data || menuResponse.data.length === 0) {
+        console.error("비어있어요");
+        // 원하는 처리를 여기에 추가 (예: 에러 메시지 표시 등)
+        return;
+      }
+
+      // 이미지 정보를 불러오는 API 호출
+      const imageResponse = await axios({
+        url: `http://localhost:8080/image/menu/${menuNo}`,
+        method: "get",
+        responseType: "arraybuffer",
+      });
+      console.log("맞지?"+imageResponse);
+
+      const menuImage = imageResponse.data ? new Blob([imageResponse.data], { type: imageResponse.headers['content-type'] }) : null;
+      // 배우 정보와 이미지 정보를 state에 업데이트
+      setMenuData({
+       
+        menuNo: menuResponse.data.menuNo,
+        menuTypeNo:menuResponse.data.menuTypeNo,
+        menuName: menuResponse.data.menuName,
+        menuPrice: menuResponse.data.menuPrice,
+        menuContent: menuResponse.data.menuContent,
+        menuImage: null,//이미지를 set 하진 않고 미리보기만
+      });
+
+      // 불러온 이미지를 미리보기로 업데이트
+      setPreviewImage(URL.createObjectURL(menuImage));
+
+    } catch (error) {
+      console.error("Failed to load menu details:", error);
+    }
   };
-const deleteMenu = (target) => {
-    setMenuType({ ...target })
+
+  //수정 비동기
+  const updateMenu = async () => {
+    console.log(menuData);
+    try {
+      // FormData 객체 생성
+      const formData = new FormData();
+       // resNo : resNo,
+      formData.append("menuName", menuData.menuName);
+      formData.append("menuNo", menuData.menuNo);
+      formData.append("menuTypeNo", menuData.menuTypeNo);
+      formData.append("menuPrice", menuData.menuPrice);
+      formData.append("menuContent", menuData.menuContent);
+
+      // menu 이미지가 변경된 경우에만 FormData에 추가
+      if (menuData.menuImage != null && menuData.menuImage instanceof Blob) {
+        formData.append("menuImage", menuData.menuImage);
+        console.log(menuData.menuImage);
+      }
+
+      // menu 정보와 이미지를 함께 서버로 전송
+      const response = await axios.put(
+        `http://localhost:8080/menu/edit/${menuData.menuNo}`,
+        formData,
+       {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        }
+      );
+      
+      // 수정 후 목록을 다시 불러오기
+      if (response.status === 200) {
+        cellClick({ menuTypeNo: menuData.menuTypeNo }); // 수정된 메뉴 타입의 메뉴 목록 다시 로드
+        closeEditMenuModal(); // 모달 닫기
+        console.log("메뉴 수정 성공");
+      } else {
+        console.error("메뉴 수정 실패", response.status);
+      }
+    } catch (error) {
+      console.error("메뉴 수정 중 오류 발생:", error);
+    }
+  };
+
+
+  const deleteMenu = (menu) => {
+    console.log(menu);
+    setMenuData({ ...menu })
+    setCurrentMenuTypeNo(menu.menuTypeNo); // 현재 선택된 메뉴 타입 번호를 상태로 설정
     openDeleteMenuModal();
   }
 
   const removeMenu = () => {
-    if (!menuData.menuNo) {
+    if (menuData.menuNo === null) {
       alert("메뉴가 선택되지 않았습니다.");
       return;
     }
-  
+
     axios({
       url: `http://localhost:8080/menu/delete/${menuData.menuNo}`,
       method: 'delete'
@@ -320,14 +554,16 @@ const deleteMenu = (target) => {
           closeDeleteMenuModal();
           // 삭제 후 초기화 코드가 필요한 경우 아래와 같이 설정합니다.
           setMenuData({
-            menuNo: 0,
+            menuNo: null,
             menuName: "",
             resNo: resNo,
             menuPrice: "",
             menuContent: "",
             attach_no: ""
           });
-          loadMenuTypeList();
+          // loadMenuTypeList();
+          cellClick({ menuTypeNo: currentMenuTypeNo }); // 여기서 currentMenuTypeNo를 사용
+
         }
       })
       .catch(error => {
@@ -335,24 +571,75 @@ const deleteMenu = (target) => {
       });
   };
 
-// 메뉴 업데이트 함수
-const updateMenu = () => {
-  axios({
-    url: `http://localhost:8080/menu/update/${menuData.menuNo}`,
-    method: "put",
-    data: menuData
-  }).then(response => {
-    if (response.data != null) {
-      alert("메뉴 수정 성공");
-      closeModal();
-      cellClick({ menuTypeNo: menuData.menuTypeNo }); // 수정된 메뉴 타입의 메뉴 목록 다시 로드
-    }
-  }).catch(error => {
-    console.error("메뉴 수정 실패: ", error);
-    alert("메뉴 수정 실패");
-  });
-};
+  // 메뉴 업데이트 함수
+  // const updateMenu = async () => {
+  //   try {
+  //     const formData = new FormData();
+  //     // menuData 객체의 키를 반복하면서 formData 객체를 구성합니다.
+  //     Object.keys(menuData).forEach(key => {
+  //       if (key !== 'menuImage') {
+  //         formData.append(key, menuData[key]);
+  //       }
+  //     });
+  
+  //     // menuImage가 File 또는 Blob 인스턴스인 경우에만 formData에 추가합니다.
+  //     if (menuData.menuImage && (menuData.menuImage instanceof File || menuData.menuImage instanceof Blob)) {
+  //       formData.append('menuImage', menuData.menuImage);
+  //     }
+  
+  //     // axios 요청을 보낼 때는 formData를 data로 사용합니다.
+  //     const response = await axios({
+  //       url: `http://localhost:8080/menu/update/${menuData.menuNo}`,
+  //       method: "put",
+  //       data: formData,
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //       },
+  //     });
+  
+  //     // 응답 처리
+  //     if (response.data) {
+  //       alert("메뉴 수정 성공");
+  //       closeModal();
+  //       cellClick({ menuTypeNo: menuData.menuTypeNo }); // 수정된 메뉴 타입의 메뉴 목록을 다시 로드합니다.
+  //     }
+  //   } catch (error) {
+  //     console.error("메뉴 수정 실패: ", error);
+  //     alert("메뉴 수정 실패");
+  //   }
+  // };
+  // const updateMenu = async () => {
+  //   try {
+  //     // FormData 객체 생성
+  //     const formData = new FormData();
+  //     formData.append("menuName", menuData.menuName);
+  //     formData.append("menuPrice", menuData.menuPrice);
+  //     formData.append("menuContent", menuData.menuContent);
+     
+  //     // menu 이미지가 변경된 경우에만 FormData에 추가
+  //     if (menuData.menuImage != null && menuData.menuImage instanceof Blob) {
+  //       formData.append("menuImage", menuData.menuImage);
+  //       console.log(menuData.menuImage);
+  //     }
 
+  //     // menu 정보와 이미지를 함께 서버로 전송
+  //     const response = await axios({
+  //       url: `http://localhost:8080/menu/update/${menuData.menuNo}`,
+  //       method: "put",
+  //       data: formData,
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //       },
+  //       }
+  //     );
+
+  //     // 수정 후 목록을 다시 불러오기
+  //     cellClick();
+  //     closeEditMenuModal(); // 모달 닫기
+  //   } catch (error) {
+  //     console.error("실패", error);
+  //   }
+  // };
   return (
     <div className="container mt-5">
       <div className="row mt-4">
@@ -405,7 +692,7 @@ const updateMenu = () => {
                 <div className="card">
                   {/* 이미지 표시 부분 */}
                   <img
-                    src={menu.menuImage || `http://localhost:8080/path/to/image/${menu.attachNo}`}
+                    src={menu.menuImage || `http://localhost:8080/image/menu/${menuData.menuNo}`}
                     className="card-img-top"
                     alt={menu.menuName}
                   />
@@ -413,7 +700,7 @@ const updateMenu = () => {
                     <h5 className="card-title">{menu.menuName}</h5>
                     <p className="card-text">{menu.menuContent}</p>
                     <p className="card-text">{menu.menuPrice}원</p>
-                    <button className="btn btn-primary" onClick={() => handleEditMenu(menu)}>수정</button>
+                    <button className="btn btn-primary" onClick={() =>editMenu(menu)}>수정</button>
                     <button className="btn btn-danger" onClick={() => deleteMenu(menu)}>삭제</button>
                   </div>
                 </div>
@@ -422,38 +709,47 @@ const updateMenu = () => {
           </div>
         </div>
       }
-     <div className="modal fade" ref={editMenuModal} id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div className="modal-dialog">
-    <div className="modal-content">
-      <div className="modal-header">
-        <h5 className="modal-title" id="editMenuModalLabel">메뉴 수정</h5>
-        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div className="modal-body">
-        <div className="mb-3">
-          <label htmlFor="menuName" className="form-label">메뉴 이름</label>
-          <input type="text" className="form-control" name="menuName" value={menuData.menuName} onChange={changeMenuChange} required />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="menuPrice" className="form-label">가격</label>
-          <input type="number" className="form-control" name="menuPrice" value={menuData.menuPrice} onChange={changeMenuChange} required />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="menuContent" className="form-label">설명</label>
-          <textarea className="form-control" name="menuContent" value={menuData.menuContent} onChange={changeMenuChange}></textarea>
-        </div>
-        <div className="mb-3">
+      <div className="modal fade" ref={editMenuModal} id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="editMenuModalLabel">메뉴 수정</h5>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <div className="mb-3">
+                <label htmlFor="menuName" className="form-label">메뉴 이름</label>
+                <input type="text" className="form-control" name="menuName" value={menuData.menuName} onChange={changeMenuChange} required />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="menuPrice" className="form-label">가격</label>
+                <input type="number" className="form-control" name="menuPrice" value={menuData.menuPrice} onChange={changeMenuChange} required />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="menuContent" className="form-label">설명</label>
+                <textarea className="form-control" name="menuContent" value={menuData.menuContent} onChange={changeMenuChange}></textarea>
+              </div>
+              <div className="mb-3">
                 <label htmlFor="menuImage" className="form-label">이미지</label>
                 <input type="file" className="form-control" name="menuImage" onChange={handleFileChange} />
+                {previewImage && (
+                                        <div className="mt-2">
+                                            <img
+                                                src={previewImage}
+                                                alt="미리보기"
+                                                className="img-fluid"
+                                            />
+                                        </div>
+                                    )}
               </div>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+              <button type="button" className="btn btn-primary" onClick={updateMenu}>변경하기</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="modal-footer">
-        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-        <button type="button" className="btn btn-primary" onClick={updateMenu}>변경하기</button>
-      </div>
-    </div>
-  </div>
-</div>
       <div className="modal fade" ref={bsModal} id="exampleModal"
         data-bs-backdrop="static" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog" role="document">
@@ -480,6 +776,15 @@ const updateMenu = () => {
               <div className="mb-3">
                 <label htmlFor="menuImage" className="form-label">이미지</label>
                 <input type="file" className="form-control" name="menuImage" onChange={handleFileChange} />
+                {previewImage && (
+                                        <div className="mt-2">
+                                            <img
+                                                src={previewImage}
+                                                alt="미리보기"
+                                                className="img-fluid"
+                                            />
+                                        </div>
+                                    )}
               </div>
             </div>
             <div className="modal-footer">
@@ -499,7 +804,7 @@ const updateMenu = () => {
             </div>
             <div className="modal-body">
 
-              <input type="text" className="form-control" name="menuTypeName" onChange={changeInfo} value={menuType.menuTypeName} />
+              <input type="text" className="form-control" name="menuTypeName" onChange={changeInfo} value={menuType.menuTypeName || ''} />
 
             </div>
             <div className="modal-footer">
@@ -527,8 +832,8 @@ const updateMenu = () => {
           </div>
         </div>
       </div>
-      
-  
+
+
       <div className="modal fade" ref={deleteMenuModal} id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content">
