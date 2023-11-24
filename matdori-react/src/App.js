@@ -18,7 +18,6 @@ import MenuByRes from './components/restaurant/menu/MenuByRes';
 import Update from './components/bus/Update';
 import BusQuit from './components/bus/BusQuit';
 import BusQuitSuccess from './components/bus/BusQuitSuccess';
-import ResAdd from './components/bus/ResAdd';
 
 
 function App() {
@@ -38,8 +37,6 @@ function App() {
               <Route path="/bus-login" element={<BusLogin/>}/>
               <Route path="/bus-profile" element={<BusProfile/>}/>
               <Route path="/bus-update" element={<Update/>}/>
-              <Route path="/bus-resAdd" element={<ResAdd/>}/>
-
               <Route path="/restaurant/menu/list" element={<MenuByRes/>}/>
               <Route path="/business/:busId/:resNo" element={<ResHome />} />
               <Route path="/business/:busId/:resNo/menu" element={<MenuByRes />} />
