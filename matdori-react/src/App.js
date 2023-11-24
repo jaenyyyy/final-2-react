@@ -19,6 +19,7 @@ import Update from './components/bus/Update';
 import BusQuit from './components/bus/BusQuit';
 import BusQuitSuccess from './components/bus/BusQuitSuccess';
 import ResAdd from './components/bus/ResAdd';
+import HashByRes from './components/restaurant/hashtag/HashByRes';
 
 
 function App() {
@@ -43,12 +44,14 @@ function App() {
               <Route path="/restaurant/menu/list" element={<MenuByRes/>}/>
               <Route path="/business/:busId/:resNo" element={<ResHome />} />
               <Route path="/business/:busId/:resNo/menu" element={<MenuByRes />} />
+              <Route path="/business/:busId/:resNo/hashtag" element={<HashByRes />} />
 
               <Route path='/find-id' element={<FindId/>}/>
               <Route path='/find-pw' element={<FindPw/>}/>
               <Route path='/bus-quit' element={<BusQuit/>}/>
               <Route path='/bus-quitsuccess' element={<BusQuitSuccess/>}/>
               <Route path='/bus-myreslist' element={<MyResList/>}/>
+
 
             </Routes>
         
@@ -58,5 +61,6 @@ function App() {
     </RecoilRoot>
   );
 }
+
 
 export default App;
