@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { busIdState } from '../../recoil';
+import { FaShop } from "react-icons/fa6";
 
 
 const MyResList = () => {
@@ -39,26 +40,42 @@ const MyResList = () => {
 
   return (
     <div className="container mt-5">
-      <h1>{busId}님 매장목록</h1>
-      <button onClick={handleAddNewRes} className="btn btn-warning my-3">
-        +신규매장 추가
-        </button>
-      <div className="row">
-        {restaurants.map((restaurant) => (
-          <div key={restaurant.resNo} className="col-md-4 mb-4">
-            <div className="card">
-              <div className="card-body">
-                <h5 className="card-title">{restaurant.resName}</h5>
-                <p className="card-text">{restaurant.resAddr1}</p>
-                <p className="card-text">{restaurant.resNo}</p>
-                <button onClick={() => handleResClick(restaurant.resNo)} className="btn btn-primary">
-                  상세보기
-                </button>
+      <div className='row'>
+        <div className="col">
+          <h1><FaShop style={{ color: '#FFB416'}}/> {busId}님  매장목록</h1>
+        </div>
+        <div className="col text-end">
+          <button onClick={handleAddNewRes} className="btn btn-warning my-3">
+            +신규매장 등록
+          </button>
+        </div>
+      </div>
+
+      <div className='row'>
+        <div className='row'>
+          {restaurants.map((restaurant) => (
+            <div key={restaurant.resNo} className='col-6 mb-4'>
+              <div className="card" style={{ maxWidth: "40rem" }}>
+                <div className="card-body">
+                  <h4 className="card-title">{restaurant.resName}</h4>
+                  <p className="card-text">{restaurant.resAddr1}</p>
+                  <button onClick={() => handleResClick(restaurant.resNo)} className="btn btn-outline-warning">
+                    매장관리
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
+
+
+
+
+
+
+
+
     </div>
   );
 };
