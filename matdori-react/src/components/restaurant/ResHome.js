@@ -115,6 +115,7 @@ const ResHome = () => {
           <Button onClick={() => navigate(`/business/${busId}/${resNo}/hours`)}>시간 관리</Button>
           <Button onClick={() => navigate(`/business/${busId}/${resNo}/notices`)}>공지사항 관리</Button>
           <Button onClick={() => navigate(`/business/${busId}/${resNo}/statistics`)}>매장 통계</Button>
+          <Button onClick={() => navigate(`/business/${busId}/${resNo}/hashtag`)}>해시태그</Button>
         </RightContainer>
       </ContentContainer>
     </OuterContainer>
