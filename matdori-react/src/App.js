@@ -15,6 +15,7 @@ import FindId from './components/bus/FindId';
 import FindPw from './components/bus/FindPw';
 import MyResList from './components/bus/MyResList';
 import MenuByRes from './components/restaurant/menu/MenuByRes';
+import ResImage from './components/restaurant/image/ResImage';
 import Update from './components/bus/Update';
 import BusQuit from './components/bus/BusQuit';
 import BusQuitSuccess from './components/bus/BusQuitSuccess';
@@ -46,7 +47,8 @@ function App() {
               <Route path="/business/:busId/:resNo" element={<ResHome />} />
               <Route path="/business/:busId/:resNo/menu" element={<MenuByRes />} />
               <Route path="/business/:busId/:resNo/hashtag" element={<HashByRes />} />
-
+              <Route path="/business/:busId/:resNo/image" element={<ResImage />} />
+              
               <Route path='/find-id' element={<FindId/>}/>
               <Route path='/find-pw' element={<FindPw/>}/>
               <Route path='/bus-quit' element={<BusQuit/>}/>
