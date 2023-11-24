@@ -20,7 +20,7 @@ const MenuByRes = () => {
   const [currentMenuTypeNo, setCurrentMenuTypeNo] = useState(null);
   const [previousImageUrl, setPreviousImageUrl] = useState(null);
 
-  const fileChooser = useRef();
+
 
   // const [newData, setNewData] = useState();
 
