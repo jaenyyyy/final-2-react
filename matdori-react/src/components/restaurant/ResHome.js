@@ -5,15 +5,35 @@ import { busIdState } from '../../recoil';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
+import { FaBowlFood } from "react-icons/fa6";
+import { MdEventSeat } from "react-icons/md";
+import { IoTime } from "react-icons/io5";
+import { FaClipboardList } from "react-icons/fa6";
+import { MdAddPhotoAlternate } from "react-icons/md";
+import { BsFillFileBarGraphFill } from "react-icons/bs";
+import { FaHashtag } from "react-icons/fa6";
+import { FaShop } from "react-icons/fa6";
+
+const RezContainer = styled.div`
+  background-color: #F2F2F2;
+  height:100%
+`;
+
+const ResContainer = styled.div`
+  background : #F2F2F2;
+`;
 
 const OuterContainer = styled.div`
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 5px #FFB416;
   margin: 20px;
-  padding: 20px;
+  padding: 30px;
   height : 500px;
+  margin-top: 50px;
+  width: 100%;
 `;
+
 
 const ResNameContainer = styled.div`
   text-align: center;
@@ -23,6 +43,7 @@ const ResNameContainer = styled.div`
 const ContentContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-left:50px;
 `;
 
 const LeftContainer = styled.div`
@@ -43,10 +64,11 @@ const ReservationsContainer = styled.div`
   padding: 20px;
   border-radius: 10px;
   height: 100%; // 왼쪽 컨테이너와 같은 높이를 유지합니다.
+  width:70%;
 `;
 
 const Button = styled.button`
-  background-color: #f0ad4e;
+  background-color: #F0F0F0;
   border: none;
   color: white;
   margin: 10px;
@@ -63,63 +85,136 @@ const Button = styled.button`
     opacity: 0.8;
   }
 `;
+
+
+
+
 const ResHome = () => {
   const { resNo } = useParams();
   const busId = useRecoilValue(busIdState);
   const navigate = useNavigate();
-  const [restaurant, setRestaurant] = useState({});
+  const [rs, SetRs] = useState([]);
+  const restaurantInfo = () => {
+    axios({
+      url: `http://localhost:8080/restaurant/resNo/${resNo}`,
+      method: "get"
+    })
+      .then(response => {
+        SetRs(response.data);
+      })
+  }
 
   useEffect(() => {
-    // 데이터를 가져오는 axios 요청
-    axios(`http://localhost:8080/business/${busId}/${resNo}`, {
-      method: 'GET',
-      // headers: {
-      //   'Content-Type': 'application/json',
-      // },
-    })
-    .then((response) => response.json()
-    .then(response=>{
-      setRestaurant(response.data);
-    })
-    )
-    // .then((data) => {
-    //   setRestaurant(response.data); // 가져온 데이터를 상태에 저장
-    // })
-    .catch((error) => {
-      console.error('Error fetching data:', error);
-      setRestaurant({ resName: restaurant.resName }); // 오류 발생 시 오류 메시지 저장
-    });
-  }, [busId, resNo]);
-  console.log(restaurant);
+    restaurantInfo();
+  }, [])
+  console.log(rs);
 
   const handleMenuClick = (path) => {
     navigate(`/business/${busId}/${resNo}/${path}`);
   };
 
- 
+
+
   return (
-    <OuterContainer>
-    <ResNameContainer>
-      <h1>{restaurant.resName}</h1>
-    </ResNameContainer>
-      <ContentContainer>
-        <LeftContainer>
-          <ReservationsContainer>
-            {/* 예약 정보 표시 로직 */}
-            예약 건수 및 예약 리스트 (임의의 데이터 또는 로딩 표시)
-          </ReservationsContainer>
-        </LeftContainer>
-        <RightContainer>
-          <Button onClick={() => navigate(`/business/${busId}/${resNo}/menu`)}>메뉴 관리</Button>
-          <Button onClick={() => navigate(`/business/${busId}/${resNo}/seats`)}>좌석 관리</Button>
-          <Button onClick={() => navigate(`/business/${busId}/${resNo}/hours`)}>시간 관리</Button>
-          <Button onClick={() => navigate(`/business/${busId}/${resNo}/notices`)}>공지사항 관리</Button>
-          <Button onClick={() => navigate(`/business/${busId}/${resNo}/image`)}>이미지 관리</Button>
-          <Button onClick={() => navigate(`/business/${busId}/${resNo}/statistics`)}>매장 통계</Button>
-          <Button onClick={() => navigate(`/business/${busId}/${resNo}/hashtag`)}>해시태그</Button>
-        </RightContainer>
-      </ContentContainer>
-    </OuterContainer>
+    <div className='container'>
+
+      <div className='row mt-4'>
+        <h1><FaShop style={{ color: '#FFB416' }} /> {rs.resName}</h1>
+      </div>
+
+      <div className='row border p-4'>
+        
+        <div className='col-5'>
+          <RezContainer>
+            <div className='rezContainer'>
+              {/* 여기에 예약내역 들어감 */}
+            </div>
+          </RezContainer>
+
+        </div>
+
+
+
+        <div className='col-7'>
+          <div class="d-flex justify-content-evenly text-center">
+            <div className='row'>
+              <div className='col'>
+                <Button onClick={() => navigate(`/business/${busId}/${resNo}/menu`)}><FaBowlFood style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+                메뉴관리
+              </div>
+
+              <div className='col'>
+                <div>
+                  <Button onClick={() => navigate(`/business/${busId}/${resNo}/seats`)}><MdEventSeat style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+                </div>
+                <div>
+                  좌석관리
+                </div>
+              </div>
+
+              <div className='col'>
+                <div>
+                  <Button onClick={() => navigate(`/business/${busId}/${resNo}/hours`)}><IoTime style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+                </div>
+                <div>
+                  시간관리
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+
+          <div class="d-flex justify-content-evenly text-center">
+          <div className='row mt-4 mx-auto'>
+            <div className='col'>
+              <div>
+                <Button onClick={() => navigate(`/business/${busId}/${resNo}/notices`)}><FaClipboardList style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+              </div>
+              <div>
+                공지사항
+              </div>
+            </div>
+
+            <div className='col'>
+              <div>
+                <Button onClick={() => navigate(`/business/${busId}/${resNo}/image`)}><MdAddPhotoAlternate style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+              </div>
+              <div>
+                사진관리
+              </div>
+            </div>
+
+            <div className='col'>
+              <div>
+                <Button onClick={() => navigate(`/business/${busId}/${resNo}/statistics`)}><BsFillFileBarGraphFill style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+              </div>
+              <div>
+                매장통계
+              </div>
+            </div>
+
+            <div className='col'>
+              <div>
+                <Button onClick={() => navigate(`/business/${busId}/${resNo}/hashtag`)}><FaHashtag style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+              </div>
+              <div>
+                해시태그
+              </div>
+            </div>
+          </div>
+</div>
+        </div>
+
+
+
+      </div>
+    </div>
+
+
+
+
+
   );
 };
 

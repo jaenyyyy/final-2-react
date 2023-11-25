@@ -3,6 +3,7 @@ import axios from 'axios';
 import { busIdState } from "../../recoil";
 import { useRecoilValue } from "recoil";
 import { useNavigate } from "react-router-dom";
+import { FaUserTie } from "react-icons/fa";
 
 
 const Update = () => {
@@ -196,133 +197,171 @@ const Update = () => {
 
   return (
     <div className="container mt-5">
-      <h1>개인정보 변경</h1>
-      {/* onSubmit={handleSubmit} */}
-      <div>
-        {/* 사업자 정보를 보여주는 수정할수 있는 input들 */}
-        <div className="mb-3">
-          <label htmlFor="busId">사업자 아이디(변경 불가능한 항목입니다)</label>
-          <input
-            type="text"
-            className="form-control"
-            id="busId"
-            name="busId"
-            value={businessInfo.busId}
-            readOnly
-            onBlur={checkUpdate}
-            onChange={(e) => setBusinessInfo({ ...businessInfo, busId: e.target.value })}
-          />
+      <div className="row mb-5">
+        <h1><FaUserTie style={{ color: '#FFB416' }} />개인정보 변경</h1>
+      </div>
+
+
+      <div className="row">
+        <div className="col">
+          <div className="mb-3">
+            <label htmlFor="busId">사업자 아이디 (변경불가)</label>
+            <input
+              type="text"
+              className="form-control"
+              id="busId"
+              name="busId"
+              value={businessInfo.busId}
+              disabled=""
+              readOnly
+              onBlur={checkUpdate}
+              onChange={(e) => setBusinessInfo({ ...businessInfo, busId: e.target.value })}
+            />
+          </div>
+
         </div>
-        <div className="mb-3">
-          <label htmlFor="busPw">사업자 비밀번호:</label>
+      </div>
+
+
+      <div className="row">
+        <div className="col">
+          <div className="mb-3">
+            <label htmlFor="busPw">사업자 비밀번호</label>
+            <input
+              type="password"
+              className={`form-control
+                ${result.busPw === true ? 'is-valid' : ''}
+                ${result.busPw === false ? 'is-invalid' : ''}
+              `}
+              id="busPw"
+              name="busPw"
+              //value={businessInfo.busPw}
+              onBlur={checkUpdate}
+
+              onChange={(e) => setBusinessInfo({ ...businessInfo, busPw: e.target.value })}
+              placeholder="비밀번호는 대문자, 소문자, 숫자, 특수 문자를 각각 하나 이상씩 포함하는 8~15자 사이의 문자로 입력하세요"
+              required
+            />
+            <div className="valid-feedback"></div>
+            <div className="invalid-feedback">비밀번호는 대문자, 소문자, 숫자, 특수 문자를 각각 하나 이상씩 포함하는 8~15자 사이의 문자로 입력하세요</div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div className="row">
+        <div className="col mb-4">
+          <label htmlFor="busPwCheck" className="form-label">
+            비밀번호 확인
+          </label>
           <input
             type="password"
             className={`form-control
-              ${result.busPw === true ? 'is-valid' : ''}
-              ${result.busPw === false ? 'is-invalid' : ''}
-            `}
-            id="busPw"
-            name="busPw"
-            //value={businessInfo.busPw}
+          ${result.busPwCheck === true ? "is-valid" : ""}
+          ${result.busPwCheck === false ? "is-invalid" : ""}
+        `}
+            id="busPwCheck"
+            name="busPwCheck"
             onBlur={checkUpdate}
-
-            onChange={(e) => setBusinessInfo({ ...businessInfo, busPw: e.target.value })}
-            placeholder="비밀번호는 대문자, 소문자, 숫자, 특수 문자를 각각 하나 이상씩 포함하는 8~15자 사이의 문자로 입력하세요"
+            onChange={(e) => setBusinessInfo({ ...businessInfo, busPwCheck: e.target.value })}
             required
           />
-          <div className="valid-feedback"></div>
-          <div className="invalid-feedback">비밀번호는 대문자, 소문자, 숫자, 특수 문자를 각각 하나 이상씩 포함하는 8~15자 사이의 문자로 입력하세요</div>
-        </div>
+          <div className="valid-feedback">비밀번호가 일치합니다</div>
+          <div className="invalid-feedback">비밀번호가 일치하지 않습니다</div>
 
-        <label htmlFor="busPwCheck" className="form-label">
-          비밀번호 확인
-        </label>
-        <input
-          type="password"
-          className={`form-control
-    ${result.busPwCheck === true ? "is-valid" : ""}
-    ${result.busPwCheck === false ? "is-invalid" : ""}
-  `}
-          id="busPwCheck"
-          name="busPwCheck"
-          onBlur={checkUpdate}
-          onChange={(e) => setBusinessInfo({ ...businessInfo, busPwCheck: e.target.value })}
-          required
-        />
-        <div className="valid-feedback">비밀번호가 일치합니다</div>
-        <div className="invalid-feedback">비밀번호가 일치하지 않습니다</div>
+        </div>
       </div>
 
-      <div className="mb-3">
-        <label htmlFor="busRegNo">사업자 등록번호(변경 불가능한 항목입니다)</label>
-        <input
-          type="text"
-          className={`form-control
+      <div className="row">
+        <div className="col">
+          <div className="mb-3">
+            <label htmlFor="busRegNo">사업자 등록번호 (변경불가)</label>
+            <input
+              type="text"
+              className={`form-control
               ${result.busRegNo === true ? 'is-valid' : ''}
               ${result.busRegNo === false ? 'is-invalid' : ''}
             `}
-          id="busRegNo"
-          name="busRegNo"
-          onBlur={checkUpdate}
-          value={businessInfo.busRegNo}
-          readOnly
-          onChange={(e) => setBusinessInfo({ ...businessInfo, busRegNo: e.target.value })}
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="busName">사업자 대표명:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="busName"
-          name="busName"
-          value={businessInfo.busName}
-          onChange={(e) => setBusinessInfo({ ...businessInfo, busName: e.target.value })}
-        />
+              id="busRegNo"
+              name="busRegNo"
+              onBlur={checkUpdate}
+              value={businessInfo.busRegNo}
+              readOnly
+              onChange={(e) => setBusinessInfo({ ...businessInfo, busRegNo: e.target.value })}
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="mb-3">
-        <label htmlFor="busTel">사업자 연락처:</label>
-        <input
-          type="text"
-          className={`form-control
+
+      <div className="row">
+        <div className="col">
+          <div className="mb-3">
+            <label htmlFor="busName">사업자 대표명</label>
+            <input
+              type="text"
+              className="form-control"
+              id="busName"
+              name="busName"
+              value={businessInfo.busName}
+              onChange={(e) => setBusinessInfo({ ...businessInfo, busName: e.target.value })}
+            />
+          </div>
+        </div>
+      </div>
+
+
+      <div className="row">
+        <div className="col">
+          <div className="mb-3">
+            <label htmlFor="busTel">사업자 연락처</label>
+            <input
+              type="text"
+              className={`form-control
               ${result.busTel === true ? 'is-valid' : ''}
               ${result.busTel === false ? 'is-invalid' : ''}
             `}
-          id="busTel"
-          name="busTel"
-          onBlur={checkUpdate}
-          value={businessInfo.busTel}
-          onChange={(e) => setBusinessInfo({ ...businessInfo, busTel: e.target.value })}
-          placeholder="연락처는 대시 - 없이 입력하세요"
-        />
-        <div className="valid-feedback"></div>
-        <div className="invalid-feedback">연락처는 대시 - 없이 010으로시작하는 11자리 숫자를 입력하세요 예시 : 01051514351</div>
+              id="busTel"
+              name="busTel"
+              onBlur={checkUpdate}
+              value={businessInfo.busTel}
+              onChange={(e) => setBusinessInfo({ ...businessInfo, busTel: e.target.value })}
+              placeholder="연락처는 대시 - 없이 입력하세요"
+            />
+            <div className="valid-feedback"></div>
+            <div className="invalid-feedback">연락처는 대시 - 없이 010으로시작하는 11자리 숫자를 입력하세요 예시 : 01051514351</div>
+          </div>
+        </div>
       </div>
 
-      <div className="mb-3">
-        <label htmlFor="busEmail">사업자 이메일:</label>
-        <input
-          type="text"
-          className={`form-control
+      <div className="row">
+        <div className="col">
+          <div className="mb-3">
+            <label htmlFor="busEmail">사업자 이메일</label>
+            <input
+              type="text"
+              className={`form-control
               ${result.busEmail === true ? 'is-valid' : ''}
               ${result.busEmail === false ? 'is-invalid' : ''}
             `}
-          id="busEmail"
-          name="busEmail"
-          value={businessInfo.busEmail}
-          onBlur={checkUpdate}
-          disabled={validCert === true}
-          onChange={(e) => {
-            handleEmailChange(e);
-            setBusinessInfo((prevBusinessInfo) => ({
-              ...prevBusinessInfo,
-              busEmail: e.target.value,
-            }));
-          }}
-        />
-        <div className="valid-feedback"></div>
-        <div className="invalid-feedback">이메일 형식이 맞지 않습니다 예시 : matdori@naver.com </div>
+              id="busEmail"
+              name="busEmail"
+              value={businessInfo.busEmail}
+              onBlur={checkUpdate}
+              disabled={validCert === true}
+              onChange={(e) => {
+                handleEmailChange(e);
+                setBusinessInfo((prevBusinessInfo) => ({
+                  ...prevBusinessInfo,
+                  busEmail: e.target.value,
+                }));
+              }}
+            />
+            <div className="valid-feedback"></div>
+            <div className="invalid-feedback">이메일 형식이 맞지 않습니다 예시 : matdori@naver.com </div>
+          </div>
+        </div>
       </div>
 
 
@@ -367,62 +406,86 @@ const Update = () => {
       )}
 
 
-
-      <div className="mb-3">
-        <label htmlFor="busPost">사업자 우편번호:</label>
-        <input
-          type="text"
-          className={`form-control
+      <div className="row">
+        <div className="col">
+          <div className="mb-3">
+            <label htmlFor="busPost">사업자 우편번호</label>
+            <input
+              type="text"
+              className={`form-control
               ${result.busPost === true ? 'is-valid' : ''}
               ${result.busPost === false ? 'is-invalid' : ''}
             `}
-          id="busPost"
-          name="busPost"
-          value={businessInfo.busPost}
-          onBlur={checkUpdate}
-          onChange={(e) => setBusinessInfo({ ...businessInfo, busPost: e.target.value })}
-          required
-        />
-        <div className="valid-feedback"></div>
-        <div className="invalid-feedback">우편번호 5~6자리 숫자를 입력하세요 </div>
-      </div>
+              id="busPost"
+              name="busPost"
+              value={businessInfo.busPost}
+              onBlur={checkUpdate}
+              onChange={(e) => setBusinessInfo({ ...businessInfo, busPost: e.target.value })}
+              required
+            />
+            <div className="valid-feedback"></div>
+            <div className="invalid-feedback">우편번호 5~6자리 숫자를 입력하세요 </div>
+          </div>
 
-      <div className="mb-3">
-        <label htmlFor="busAddr1">사업자 기본주소:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="busAddr1"
-          name="busAddr1"
-          value={businessInfo.busAddr1}
-          onChange={(e) => setBusinessInfo({ ...businessInfo, busAddr1: e.target.value })}
-        />
-      </div>
-
-      <div className="mb-3">
-        <label htmlFor="busAddr2">사업자 상세주소:</label>
-        <input
-          type="text"
-          className="form-control"
-          id="busAddr2"
-          name="busAddr2"
-          value={businessInfo.busAddr2}
-          onChange={(e) => setBusinessInfo({ ...businessInfo, busAddr2: e.target.value })}
-        />
-      </div>
-      <button
-        onClick={updateBusinessInfo}
-        type="submit"
-        className="btn btn-primary"
-        disabled={!areAllInputsValid()}
-      >
-        정보 수정
-      </button>
-      {!areAllInputsValid() && (
-        <div className="alert alert-danger mt-2" role="alert">
-          완료되지 않은 항목이 있습니다.
         </div>
-      )}
+      </div>
+
+      <div className="row">
+        <div className="col">
+          <div className="mb-3">
+            <label htmlFor="busAddr1">사업자 기본주소</label>
+            <input
+              type="text"
+              className="form-control"
+              id="busAddr1"
+              name="busAddr1"
+              value={businessInfo.busAddr1}
+              onChange={(e) => setBusinessInfo({ ...businessInfo, busAddr1: e.target.value })}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col">
+          <div className="mb-3">
+            <label htmlFor="busAddr2">사업자 상세주소</label>
+            <input
+              type="text"
+              className="form-control"
+              id="busAddr2"
+              name="busAddr2"
+              value={businessInfo.busAddr2}
+              onChange={(e) => setBusinessInfo({ ...businessInfo, busAddr2: e.target.value })}
+            />
+          </div>
+        </div>
+      </div>
+
+      
+      <div className="row">
+        <div className="col">
+          {!areAllInputsValid() && (
+            <div className="alert alert-danger mt-2" role="alert">
+              완료되지 않은 항목이 있습니다.
+            </div>
+          )}
+        </div>
+      </div>
+
+
+      <div className="row ">
+        <button
+          onClick={updateBusinessInfo}
+          type="submit"
+          className="btn btn-primary"
+          disabled={!areAllInputsValid()}
+        >
+          정보 수정
+        </button>
+
+      </div>
+
     </div >
   );
 };
