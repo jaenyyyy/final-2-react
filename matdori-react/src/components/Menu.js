@@ -25,7 +25,7 @@ const Menu = (props) => {
                     <div className="col ms-4" style={{ marginTop: '70px' }}>
                     </div>
                     <div className="col text-center">
-                    <NavLink className="navbar-brand" to="/">
+                    <NavLink className="navbar-brand" to="bus-myreslist">
                         <img src={matdori} width={250} />
                     </NavLink>
                     </div>

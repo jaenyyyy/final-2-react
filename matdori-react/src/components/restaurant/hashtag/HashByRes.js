@@ -3,6 +3,8 @@ import { useRecoilValue } from "recoil";
 import { busIdState } from '../../../recoil';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { FaHashtag } from "react-icons/fa6";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 const HashByRes = () => {
     const busId = useRecoilValue(busIdState);
@@ -76,7 +78,9 @@ const HashByRes = () => {
         <div className="container mt-5">
             <div className="row mt-4 offset-1">
                 <div className="row">
-                    <h1>해시태그 관리</h1>
+                    <div className="col">
+                        <h1><FaHashtag style={{ color: '#FFB416'}} /> 해시태그 관리</h1>
+                    </div>
                 </div>
             </div>
 
@@ -86,12 +90,12 @@ const HashByRes = () => {
                     <div className="row">
                         <h5>전체 해시태그 목록</h5>
                         <span>추가하고 싶은 해시태그를 선택해주세요</span>
-                        <div className="overflow-auto" style={{ maxHeight: "400px" }}>
+                        <div className="overflow-auto border p-4" style={{ maxHeight: "400px" }}>
                             <div className="list-group">
                                 {totalHashList.map((total) => (
                                     <div key={total.hashNo} className="list-group-item">
                                         <button
-                                            className="btn btn-secondary mt-2"
+                                            className="btn btn-success mt-2"
                                             onClick={() => {
                                                 if (resHashList.length >= 5) {
                                                     return;
@@ -116,7 +120,8 @@ const HashByRes = () => {
                             매장에 등록된 해시태그 (최대 5개)
                         </h5>
                         <span>제외하고 싶은 해시태그를 선택해주세요</span>
-                        <div className="border">
+                        
+                        <div className="border p-4">
                             {resHashList.map((hashtag) => (
                                 <div className="mb-3" key={hashtag.hashNo}>
                                     <button className="btn btn-warning mt-2" onClick={() => handleDelete(hashtag.hashNo)}>

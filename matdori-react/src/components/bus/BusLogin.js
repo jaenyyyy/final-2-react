@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { busIdState } from "../../recoil";
+import { FaUserTie } from "react-icons/fa";
 
 const BusLogin = () => {
   const [formData, setFormData] = useState({
@@ -50,12 +51,15 @@ const BusLogin = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h1>사업체 로그인</h1>
+    <div className="container mt-5 mb-4">
+      <div className="row mt-4 offset-3">
+        <h1><FaUserTie style={{ color: '#FFB416' }} />Login</h1>
+      </div>
+        
       <div className="row">
         <div className="col-md-6 offset-md-3">
           <form onSubmit={handleSubmit}>
-            <div className="mb-3">
+            <div className="mb-3 mt-4">
               <label htmlFor="busId" className="form-label">
                 사업자 아이디
               </label>
@@ -103,9 +107,11 @@ const BusLogin = () => {
                 <a href="/#find-pw" className="text-decoration-none">비밀번호 찾기</a>
               </div>
             </div>
-            <button type="submit" className="btn btn-primary mt-3">
+            <div className="mb-3">
+            <button type="submit" className="btn btn-warning mt-3 w-100">
               로그인
             </button>
+            </div>
           </form>
         </div>
       </div>

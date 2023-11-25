@@ -2,6 +2,7 @@ import { useState } from "react";
 import { busIdState } from "../../recoil";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useNavigate } from "react-router-dom";
+import { FaUserTimes } from "react-icons/fa";
 
 
 const BusQuit = () => {
@@ -9,7 +10,7 @@ const BusQuit = () => {
   //const busId = useRecoilValue(busIdState);
   const [busId, setBusId] = useRecoilState(busIdState);
   const navigate = useNavigate();
-  
+
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -20,7 +21,7 @@ const BusQuit = () => {
       const response = await fetch(`http://localhost:8080/business/quit/${busId}?password=${password}`, {
         method: "DELETE",
       });
-  
+
       if (response.ok) {
         // 회원 탈퇴 성공
         alert("회원 탈퇴가 완료되었습니다.");
@@ -38,17 +39,20 @@ const BusQuit = () => {
     } catch (error) {
       console.error("회원 탈퇴 요청 중 오류 발생:", error);
       alert("회원 탈퇴 요청 중 오류가 발생했습니다.");
-    } 
+    }
   };
-  
+
 
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", color: "#333" }}>
-      <h2 style={{ textAlign: "center" }}>회원 탈퇴</h2>
-      <p style={{ textAlign: "center", color: "red", fontWeight: "bold" }}>
-        경고: 회원 탈퇴 시에는 복구할 수 없습니다.
-      </p>
-      <div style={{ textAlign: "center" }}>
+    <div className="container mt-5 mb-4 w-50">
+      <div className="row mt-4">
+        <div style={{ fontFamily: "Arial, sans-serif", color: "#333" }}>
+          <h2><FaUserTimes style={{ color: '#FFB416' }} />회원 탈퇴</h2>
+        </div>
+      </div>
+
+
+      <div className="row" style={{ textAlign: "center" }}>
         <input
           type="password"
           placeholder="비밀번호를 입력하세요"
@@ -61,6 +65,9 @@ const BusQuit = () => {
             border: "1px solid #ccc",
           }}
         />
+        <p style={{ textAlign: "center", color: "red", fontWeight: "bold" }}>
+          경고: 회원 탈퇴시에는 복구할 수 없습니다.
+        </p>
         <br />
         <button
           onClick={handleWithdrawal}
@@ -78,6 +85,7 @@ const BusQuit = () => {
         </button>
       </div>
     </div>
+
   );
 };
 
