@@ -23,6 +23,7 @@ import BusQuitSuccess from './components/bus/BusQuitSuccess';
 
 import ResAdd from './components/bus/ResAdd';
 import HashByRes from './components/restaurant/hashtag/HashByRes';
+import ClockByRes from './components/restaurant/clock/ClockByRes';
 
 
 
@@ -48,6 +49,7 @@ function App() {
               <Route path="/business/:busId/:resNo" element={<ResHome />} />
               <Route path="/business/:busId/:resNo/menu" element={<MenuByRes />} />
               <Route path="/business/:busId/:resNo/hashtag" element={<HashByRes />} />
+              <Route path="/business/:busId/:resNo/clock" element={<ClockByRes />} />
               <Route path="/business/:busId/:resNo/image" element={<ResImage />} />
               
               <Route path='/find-id' element={<FindId/>}/>
