@@ -8,6 +8,35 @@ const ResAdd = () => {
   const navigate = useNavigate();
   const busId = useRecoilValue(busIdState);
 
+  const [regions, setRegions] = useState([
+    { no: 1, name: '영등포구' },
+    { no: 2, name: '강동구' },
+    { no: 3, name: '송파구' },
+    { no: 4, name: '강남구' },
+    { no: 5, name: '서초구' },
+    { no: 6, name: '관악구' },
+    { no: 7, name: '동작구' },
+    { no: 8, name: '금천구' },
+    { no: 9, name: '구로구' },
+    { no: 10, name: '강서구' },
+    { no: 11, name: '양천구' },
+    { no: 12, name: '마포구' },
+    { no: 13, name: '서대문구' },
+    { no: 17, name: '노원구' },
+    { no: 18, name: '도봉구' },
+    { no: 16, name: '은평구' },
+    { no: 19, name: '강북구' },
+    { no: 20, name: '성북구' },
+    { no: 21, name: '중랑구' },
+    { no: 22, name: '동대문구' },
+    { no: 23, name: '광진구' },
+    { no: 24, name: '성동구' },
+    { no: 25, name: '용산구' },
+    { no: 26, name: '종로구' },
+    { no: 27, name: '은평구' }
+
+  ]);
+
   const [restaurantData, setRestaurantData] = useState({
     busId:busId,
     resName: "",
@@ -26,6 +55,16 @@ const ResAdd = () => {
     setRestaurantData({
       ...restaurantData,
       [name]: value
+    });
+  };
+
+  const handleRegionChange = (e) => {
+    const selectedRegionNo = e.target.value;
+    console.log("선택된 지역 번호:", selectedRegionNo); 
+    setRestaurantData(prevState => {
+      const updatedState = { ...prevState, resRegionNo: selectedRegionNo };
+      console.log(" restaurantData:", updatedState); 
+      return updatedState; // 업데이트된 상태를 반환
     });
   };
 
@@ -74,18 +113,25 @@ const ResAdd = () => {
         />
       </div>
 
-{/* 지역번호 입력 필드 */}
-<div className="mb-3">
+ {/* 지역번호 드롭다운 메뉴 */}
+ <div className="mb-3">
         <label htmlFor="resRegionNo" className="form-label">지역번호</label>
-        <input
-          type="text"
-          className="form-control"
-          id="resRegionNo"
-          name="resRegionNo"
-          value={restaurantData.resRegionNo}
-          onChange={handleChange}
-        />
+        <select
+  className="form-control"
+  id="resRegionNo"
+  name="resRegionNo"
+  value={restaurantData.resRegionNo}
+  onChange={handleRegionChange}
+>
+  <option value="">지역을 선택하세요</option>
+  {regions.map((region) => (
+    <option key={region.no} value={region.no}>
+      {region.name}
+    </option>
+  ))}
+</select>
       </div>
+
 
       {/* 사업자 등록번호 입력 필드 */}
       <div className="mb-3">
