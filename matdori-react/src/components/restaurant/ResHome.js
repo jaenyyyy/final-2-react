@@ -154,7 +154,7 @@ const ResHome = () => {
 
               <div className='col'>
                 <div>
-                  <Button onClick={() => navigate(`/business/${busId}/${resNo}/hours`)}><IoTime style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+                  <Button onClick={() => navigate(`/business/${busId}/${resNo}/clock`)}><IoTime style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
                 </div>
                 <div>
                   시간관리
