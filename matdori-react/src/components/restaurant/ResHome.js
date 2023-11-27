@@ -123,7 +123,7 @@ const ResHome = () => {
       </div>
 
       <div className='row border p-4'>
-        
+
         <div className='col-5'>
           <RezContainer>
             <div className='rezContainer'>
@@ -160,50 +160,49 @@ const ResHome = () => {
                   시간관리
                 </div>
               </div>
-
             </div>
           </div>
 
 
           <div class="d-flex justify-content-evenly text-center">
-          <div className='row mt-4 mx-auto'>
-            <div className='col'>
-              <div>
-                <Button onClick={() => navigate(`/business/${busId}/${resNo}/notices`)}><FaClipboardList style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+            <div className='row mt-4 mx-auto'>
+              <div className='col'>
+                <div>
+                  <Button onClick={() => navigate(`/business/${busId}/${resNo}/notice`)}><FaClipboardList style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+                </div>
+                <div>
+                  공지사항
+                </div>
               </div>
-              <div>
-                공지사항
-              </div>
-            </div>
 
-            <div className='col'>
-              <div>
-                <Button onClick={() => navigate(`/business/${busId}/${resNo}/image`)}><MdAddPhotoAlternate style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+              <div className='col'>
+                <div>
+                  <Button onClick={() => navigate(`/business/${busId}/${resNo}/image`)}><MdAddPhotoAlternate style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+                </div>
+                <div>
+                  사진관리
+                </div>
               </div>
-              <div>
-                사진관리
-              </div>
-            </div>
 
-            <div className='col'>
-              <div>
-                <Button onClick={() => navigate(`/business/${busId}/${resNo}/statistics`)}><BsFillFileBarGraphFill style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+              <div className='col'>
+                <div>
+                  <Button onClick={() => navigate(`/business/${busId}/${resNo}/statistics`)}><BsFillFileBarGraphFill style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+                </div>
+                <div>
+                  매장통계
+                </div>
               </div>
-              <div>
-                매장통계
-              </div>
-            </div>
 
-            <div className='col'>
-              <div>
-                <Button onClick={() => navigate(`/business/${busId}/${resNo}/hashtag`)}><FaHashtag style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
-              </div>
-              <div>
-                해시태그
+              <div className='col'>
+                <div>
+                  <Button onClick={() => navigate(`/business/${busId}/${resNo}/hashtag`)}><FaHashtag style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
+                </div>
+                <div>
+                  해시태그
+                </div>
               </div>
             </div>
           </div>
-</div>
         </div>
 
 
@@ -217,5 +216,7 @@ const ResHome = () => {
 
   );
 };
+
+
 
 export default ResHome;

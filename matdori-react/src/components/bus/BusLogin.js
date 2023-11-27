@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { busIdState } from "../../recoil";
 import { FaUserTie } from "react-icons/fa";
@@ -29,8 +29,8 @@ const BusLogin = () => {
     localStorage.setItem('loggedInBusId', busId);
     localStorage.setItem('loggedInToken', token);
     setUser(busId); // Recoil 상태 업데이트
-    console.log(busId,token);
-    navigate('/');
+    console.log(busId, token);
+    navigate('/bus-myreslist');
   };
 
   const handleLoginFailure = (error) => {
@@ -55,7 +55,7 @@ const BusLogin = () => {
       <div className="row mt-4 offset-3">
         <h1><FaUserTie style={{ color: '#FFB416' }} />Login</h1>
       </div>
-        
+
       <div className="row">
         <div className="col-md-6 offset-md-3">
           <form onSubmit={handleSubmit}>
@@ -102,15 +102,25 @@ const BusLogin = () => {
                   아이디 저장하기
                 </label> */}
               </div>
-              <div className="text-end">
-                <a href="/#/find-id" className="text-decoration-none me-2">아이디 찾기</a>
-                <a href="/#find-pw" className="text-decoration-none">비밀번호 찾기</a>
-              </div>
+
             </div>
             <div className="mb-3">
-            <button type="submit" className="btn btn-warning mt-3 w-100">
-              로그인
-            </button>
+              <button type="submit" className="btn btn-warning mt-3 w-100">
+                로그인
+              </button>
+              <hr className="my-4 border border-warning" />
+              <div className="d-flex justify-content-between align-items-center mt-3">
+                {/* 왼쪽에 회원가입 링크 */}
+                <Link to="/bus-join" className="text-decoration-none">
+                  회원가입
+                </Link>
+
+                {/* 오른쪽에 아이디 및 비밀번호 찾기 링크 */}
+                <div>
+                  <a href="/#/find-id" className="text-decoration-none me-2">아이디 찾기</a>
+                  <a href="/#find-pw" className="text-decoration-none">비밀번호 찾기</a>
+                </div>
+              </div>
             </div>
           </form>
         </div>
