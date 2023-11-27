@@ -32,8 +32,6 @@ const Menu = (props) => {
                     <div className="col text-end me-4" style={{ marginTop: '70px' }}>
                         {!busId ? (
                             <>
-
-                                <NavLink className={`nav-link ${location.pathname === '/bus-join' ? 'active' : ''}`} to="/bus-join">사업체회원가입</NavLink>
                                 <NavLink className={`nav-link ${location.pathname === '/bus-login' ? 'active' : ''}`} to="/bus-login">사업체로그인</NavLink>
                             </>
                         ) : (
@@ -51,9 +49,6 @@ const Menu = (props) => {
             <ul className="navbar-nav mx-auto"> 
                 <li className="nav-item me-4">
                     <NavLink className={`nav-link ${location.pathname === '/bus-myreslist' ? 'active' : ''}`} to="/bus-myreslist">내 매장목록</NavLink>
-                </li>
-                <li className="nav-item me-4">
-                    <NavLink className={`nav-link ${location.pathname === '/Bus-quit' ? 'active' : ''}`} to="/bus-quit">탈퇴하기</NavLink>
                 </li>
                 <li className="nav-item">
                     <NavLink className={`nav-link ${location.pathname === '/Bus-profile' ? 'active' : ''}`} to="/Bus-profile">프로필</NavLink>
