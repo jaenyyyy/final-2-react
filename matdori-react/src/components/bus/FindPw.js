@@ -17,7 +17,7 @@ const FindPw = () => {
     axios.post('http://localhost:8080/business/findPw', {
       busId: id,
       busEmail: email,
-      busRegNo: busRegNo
+      busRegNo: busRegNo 
     })
       .then((response) => {
         setLoading(false); // 요청 완료 후 로딩 상태 비활성화

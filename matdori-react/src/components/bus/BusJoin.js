@@ -143,6 +143,7 @@ const BusJoin = () => {
       result.busTel === true &&
       result.busEmail === true &&
       result.busPost === true &&
+      // result.busAddr1 === true &&
       validCert === true
     );
   };
@@ -216,7 +217,9 @@ const BusJoin = () => {
                   onBlur={checkJoin}
                   placeholder="아이디는 영문소문자로 시작하는 영문,숫자 5~20자로 입력하세요"
                   required
+                  autoComplete="off"
                   ref={inputRef} // ref 설정
+                  
                 />
                 <div className="valid-feedback"></div>
                 <div className="invalid-feedback">
@@ -301,6 +304,7 @@ const BusJoin = () => {
                   onBlur={checkJoin}
                   placeholder="사업자 등록 번호 10자리숫자를 입력하세요"
                   required
+                  autoComplete="off"
                   ref={inputRefRegNo} // ref 설정
                 />
                 <div className="valid-feedback"></div>
@@ -325,6 +329,7 @@ const BusJoin = () => {
                   className="form-control"
                   id="busName"
                   name="busName"
+                  autoComplete="off"
                   onChange={handleChange}
                   onBlur={checkJoin}
                   required
@@ -352,6 +357,7 @@ const BusJoin = () => {
                   name="busTel"
                   onChange={handleChange}
                   onBlur={checkJoin}
+                  autoComplete="off"
                   placeholder="연락처는 대시 (-) 없이 입력하세요"
                 />
                 <div className="valid-feedback"></div>
@@ -377,6 +383,7 @@ const BusJoin = () => {
                   `}
                   id="busEmail"
                   name="busEmail"
+                  autoComplete="off"
                   onChange={handleChange}
                   onBlur={checkJoin}
                   required
@@ -412,6 +419,7 @@ const BusJoin = () => {
                 <div className="input-group">
                   <input
                     type="text"
+                    autoComplete="off"
                     className={`form-control ${validCert === false ? "is-invalid" : validCert === true ? "is-valid" : ""}`}
 
                     id="certNumber"
@@ -464,6 +472,7 @@ const BusJoin = () => {
                   onBlur={checkJoin}
                   placeholder="우편번호 5~6자리 숫자를 입력하세요"
                   required
+                  autoComplete="off"
                 />
                 <div className="valid-feedback"></div>
                 <div className="invalid-feedback">우편번호 5~6자리 숫자를 입력하세요 </div>
@@ -486,7 +495,7 @@ const BusJoin = () => {
                   name="busAddr1"
                   onChange={handleChange}
                   onBlur={checkJoin}
-                  required
+
                 />
               </div>
             </div>
@@ -507,6 +516,7 @@ const BusJoin = () => {
                   name="busAddr2"
                   onChange={handleChange}
                   onBlur={checkJoin}
+                  autoComplete="off"
                 />
               </div>
             </div>
