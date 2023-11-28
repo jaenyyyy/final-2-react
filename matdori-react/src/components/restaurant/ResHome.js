@@ -184,14 +184,6 @@ const ResHome = () => {
                 </div>
               </div>
 
-              <div className='col'>
-                <div>
-                  <Button onClick={() => navigate(`/business/${busId}/${resNo}/statistics`)}><BsFillFileBarGraphFill style={{ color: '#FFB416', fontSize: '4em' }} /></Button>
-                </div>
-                <div>
-                  매장통계
-                </div>
-              </div>
 
               <div className='col'>
                 <div>
