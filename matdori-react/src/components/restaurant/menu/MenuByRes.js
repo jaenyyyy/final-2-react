@@ -20,11 +20,6 @@ const MenuByRes = () => {
   const [currentMenuTypeNo, setCurrentMenuTypeNo] = useState(null);
   const [previousImageUrl, setPreviousImageUrl] = useState(null);
 
-
-
-  // const [newData, setNewData] = useState();
-
-
   useEffect(() => {
     console.log(busId)
     loadMenuTypeList();
@@ -37,7 +32,6 @@ const MenuByRes = () => {
       resNo: resNo
     })
   }
-
 
 
   const changeInfo = (e) => {
@@ -71,7 +65,6 @@ const MenuByRes = () => {
       }
     }).then(response => {
       console.log(response.data)
-      // alart("성공")
       loadMenuTypeList();
     });
   };
