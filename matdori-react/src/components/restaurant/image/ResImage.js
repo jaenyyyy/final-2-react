@@ -31,6 +31,7 @@ const ResImage = () => {
           // 기존의 이미지 URL들을 해제합니다.
           images.forEach(imageUrl => URL.revokeObjectURL(imageUrl));
           // 새로운 이미지 URL 배열로 상태를 업데이트합니다.
+          console.log(newImageUrls);
           setImages(newImageUrls);
       
         } catch (error) {
