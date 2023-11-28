@@ -70,3 +70,16 @@ h2 {
     top: 8px;
     right: 8px;
 }
+/* 리스트에 있는 이미지 스타일 */
+.image-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+}
+
+/* 모달에서 미리보기하는 이미지 스타일 */
+.modal-body .img-preview {
+    width: 100%;
+    height: 300px;
+    object-fit: contain;
+}
