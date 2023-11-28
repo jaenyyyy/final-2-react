@@ -68,7 +68,7 @@ export const WorkdayManager = () => {
 
 
 
-//  여긴 시간설정 공간
+//  여긴 시간설정 공간입니다
 const ClockByRes = () => {
   const busId = useRecoilValue(busIdState);
   const { resNo } = useParams();
