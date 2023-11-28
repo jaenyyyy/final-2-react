@@ -1,3 +1,7 @@
+
+
+
+
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -5,6 +9,7 @@ import { useRecoilValue } from "recoil";
 import { busIdState } from '../../../recoil';
 import { Modal } from "bootstrap";
 import './MenuByRes.css'; // CSS 파일 import
+import { FaBowlFood } from "react-icons/fa6";
 
 
 const MenuByRes = () => {
@@ -644,10 +649,10 @@ const MenuByRes = () => {
     <div className="container mt-5">
       <div className="row mt-4">
         <div className="col-10 offset-1">
-          <h1>메뉴 관리</h1>
+          <h1><FaBowlFood style={{ color: '#FFB416', fontSize: '1em' }} />메뉴 관리</h1>
         </div>
       </div>
-      <div className="row mt-4">
+      <div className="row mt-4 offset-1">
         <div className="col-sm-8">
           <input
             className="form-control"
@@ -657,10 +662,10 @@ const MenuByRes = () => {
           />
         </div>
         <div className="col-sm-4">
-          <button className="btn btn-outline-primary" onClick={addMenuType}>분류 추가</button>
+          <button className="btn btn-warning" onClick={addMenuType}>분류 추가</button>
         </div>
       </div>
-      <table className="table">
+      <table className="table offset-1">
         <thead>
           <tr>
             <th>메뉴 타입 번호</th>
@@ -674,9 +679,9 @@ const MenuByRes = () => {
               <td onClick={() => cellClick(menuType)}>{menuType.menuTypeNo}</td>
               <td onClick={() => cellClick(menuType)}>{menuType.menuTypeName}</td>
               <td>
-                <button className="btn btn-outline-primary me-2" onClick={() => addMe(menuType)}>메뉴등록</button>
-                <button className="btn btn-outline-primary me-2" onClick={() => changeMenuTypeName(menuType)}>수정</button>
-                <button className="btn btn-outline-primary" onClick={() => deleteMenuType(menuType)}>삭제</button>
+                <button className="btn btn-outline-warning me-2" onClick={() => addMe(menuType)}>메뉴등록</button>
+                <button className="btn btn-outline-warning me-2" onClick={() => changeMenuTypeName(menuType)}>수정</button>
+                <button className="btn btn-outline-warning" onClick={() => deleteMenuType(menuType)}>삭제</button>
               </td>
             </tr>
           ))}
@@ -684,7 +689,7 @@ const MenuByRes = () => {
       </table>
       {
         menuList.length > 0 &&
-        <div className="menu-list-container">
+        <div className="menu-list-container offset-1">
           <h3>메뉴 리스트</h3>
           <div className="row">
             {menuList.map(menu => (
@@ -700,7 +705,7 @@ const MenuByRes = () => {
                     <h5 className="card-title">{menu.menuName}</h5>
                     <p className="card-text">{menu.menuContent}</p>
                     <p className="card-text">{menu.menuPrice}원</p>
-                    <button className="btn btn-primary" onClick={() =>editMenu(menu)}>수정</button>
+                    <button className="btn btn-warning" onClick={() =>editMenu(menu)}>수정</button>
                     <button className="btn btn-danger" onClick={() => deleteMenu(menu)}>삭제</button>
                   </div>
                 </div>
@@ -745,7 +750,7 @@ const MenuByRes = () => {
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-              <button type="button" className="btn btn-primary" onClick={updateMenu}>변경하기</button>
+              <button type="button" className="btn btn-warning" onClick={updateMenu}>변경하기</button>
             </div>
           </div>
         </div>
@@ -789,7 +794,7 @@ const MenuByRes = () => {
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={closeModal}>닫기</button>
-              <button type="button" className="btn btn-primary" onClick={addMenu}>등록하기</button>
+              <button type="button" className="btn btn-warning" onClick={addMenu}>등록하기</button>
             </div>
           </div>
         </div>
@@ -809,7 +814,7 @@ const MenuByRes = () => {
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={closeModal2}>닫기</button>
-              <button type="button" className="btn btn-primary" onClick={updateMenuType}>변경하기</button>
+              <button type="button" className="btn btn-warning" onClick={updateMenuType}>변경하기</button>
             </div>
           </div>
         </div>
