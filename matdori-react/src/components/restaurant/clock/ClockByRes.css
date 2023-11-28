@@ -1,0 +1,36 @@
+/* CSS 스타일 */
+.card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 8px;
+  }
+  
+  .time-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .time {
+    font-size: 1.5rem; /* 시간의 폰트 사이즈를 크게 설정 */
+    margin-right: 12px;
+  }
+  
+  .duration {
+    font-size: 0.8rem; /* 시간 우측 내용의 폰트 사이즈를 작게 설정 */
+  }
+  
+  .delete-button {
+    padding: 4px 8px;
+    font-size: 0.8rem; /* 삭제 버튼의 폰트 사이즈 설정 */
+    background: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    position: absolute; /* 버튼을 우측 상단에 위치시킴 */
+    top: 10px;
+    right: 10px;
+  }
+  
