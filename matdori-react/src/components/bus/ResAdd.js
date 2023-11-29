@@ -89,7 +89,7 @@ const ResAdd = () => {
     axios.post('http://localhost:8080/restaurant/', payload)
       .then((response) => {
         console.log('매장 등록 성공', response.data);
-        navigate('/join/success');
+        navigate('/bus-myreslist');
       })
       .catch((error) => {
         console.error('정보 등록 실패:', error);

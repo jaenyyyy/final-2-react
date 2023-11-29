@@ -466,7 +466,7 @@ const MenuByRes = () => {
       console.log("맞지?"+imageResponse);
 
       const menuImage = imageResponse.data ? new Blob([imageResponse.data], { type: imageResponse.headers['content-type'] }) : null;
-      // 배우 정보와 이미지 정보를 state에 업데이트
+      // 메뉴 정보와 이미지 정보를 state에 업데이트
       setMenuData({
        
         menuNo: menuResponse.data.menuNo,
